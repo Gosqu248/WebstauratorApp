@@ -64,6 +64,7 @@ const RestaurantList = ({ restaurants }: RestaurantListProps) => {
             fetchData();
         }, [item.restaurantId]);
 
+
         return (
             <View style={styles.restaurantCard}>
                 <View style={styles.imageContainer}>
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
     },
     restaurantImage: {
         width: '100%',
-        height: 200,
+        height: 150,
         borderRadius: 10,
     },
     logoContainer: {
@@ -189,13 +190,6 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: Colors.mediumDark,
     },
-    loadingText: {
-        color: '#000',
-        fontSize: 16,
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        textAlign: 'center',
-    }
+
 });
 export default RestaurantList;

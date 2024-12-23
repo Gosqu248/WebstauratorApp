@@ -5,7 +5,11 @@ import * as Location from "expo-location";
 import {BottomSheetModal} from "@gorhom/bottom-sheet";
 import BottomSheetCustom from "@/src/components/home/BottomSheetCustom";
 
-const CustomHeader = () => {
+type CustomHeaderProps = {
+    openDrawer: () => void;
+};
+
+const CustomHeader = ({ openDrawer }: CustomHeaderProps) => {
     const [address, setAddress] = useState<string | null>(null);
     const [location, setLocation] = useState<Location.LocationObject | null>(null);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -14,6 +18,8 @@ const CustomHeader = () => {
     const openModal = () => {
         bottomSheetModalRef.current?.present();
     }
+
+
 
     useEffect(() => {
         (async () => {
@@ -33,25 +39,26 @@ const CustomHeader = () => {
     }, []);
 
     return (
-    <SafeAreaView style={styles.safeArea}>
-        <BottomSheetCustom ref={bottomSheetModalRef} />
-        <View style={styles.container}>
-          <View style={styles.main}>
-          <TouchableOpacity onPress={() => {}}>
-              <Image style={styles.image} source={require('../../../assets/images/webstaurator-logo.png')} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.titleContainer} onPress={openModal}>
-              <View style={styles.nameView}>
-                  <Text style={styles.subtitle}>{address ? address : 'Loading'}</Text>
-                  <Ionicons name={'chevron-down-outline'} size={24} color={'black'} />
-              </View>
-          </TouchableOpacity>
-          <TouchableOpacity>
-                <Ionicons name={'menu'} size={30} color={'black'} />
-          </TouchableOpacity>
-          </View>
-      </View>
-    </SafeAreaView>
+
+            <SafeAreaView style={styles.safeArea}>
+                <BottomSheetCustom ref={bottomSheetModalRef} />
+                <View style={styles.container}>
+                    <View style={styles.main}>
+                        <TouchableOpacity onPress={() => {}}>
+                            <Image style={styles.image} source={require('../../../assets/images/webstaurator-logo.png')} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.titleContainer} onPress={openModal}>
+                            <View style={styles.nameView}>
+                                <Text style={styles.subtitle}>{address ? address : 'Loading'}</Text>
+                                <Ionicons name={'chevron-down-outline'} size={24} color={'black'} />
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={openDrawer}>
+                            <Ionicons name={'menu'} size={30} color={'black'} />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </SafeAreaView>
   );
 };
 

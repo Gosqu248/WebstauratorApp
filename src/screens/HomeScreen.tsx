@@ -29,7 +29,7 @@ export function HomeScreen({ navigation }: HomeScreenProps) {
             setError(null);
 
             const response = await axios.get<SearchedRestaurant[]>(
-                `${config.backendUrl}/restaurantAddress/search?address=33-100`
+                `${config.backendUrl}/restaurantAddress/search?address=33-100`,
             );
 
             setRestaurants(response.data);
