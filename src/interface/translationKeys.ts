@@ -172,4 +172,5 @@ export interface TranslationKeys {
     paid: string;
     paymentId: string;
     loading: string;
+    currentLocation: string;
 }

@@ -171,5 +171,6 @@
   "notPaid": "Not paid",
   "paid": "Paid",
   "paymentId": "Payment ID",
-  "loading": "Loading..."
+  "loading": "Loading...",
+  "currentLocation": "Current location",
 }

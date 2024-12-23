@@ -1,12 +1,19 @@
 import {View, Text, SafeAreaView, StyleSheet, TouchableOpacity, Image} from 'react-native'
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import {Ionicons} from "@expo/vector-icons";
 import * as Location from "expo-location";
+import {BottomSheetModal} from "@gorhom/bottom-sheet";
+import BottomSheetCustom from "@/src/components/home/BottomSheetCustom";
 
 const CustomHeader = () => {
     const [address, setAddress] = useState<string | null>(null);
     const [location, setLocation] = useState<Location.LocationObject | null>(null);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
+    const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
+    const openModal = () => {
+        bottomSheetModalRef.current?.present();
+    }
 
     useEffect(() => {
         (async () => {
@@ -27,12 +34,13 @@ const CustomHeader = () => {
 
     return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
+        <BottomSheetCustom ref={bottomSheetModalRef} />
+        <View style={styles.container}>
           <View style={styles.main}>
           <TouchableOpacity onPress={() => {}}>
               <Image style={styles.image} source={require('../../../assets/images/webstaurator-logo.png')} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.titleContainer}>
+          <TouchableOpacity style={styles.titleContainer} onPress={openModal}>
               <View style={styles.nameView}>
                   <Text style={styles.subtitle}>{address ? address : 'Loading'}</Text>
                   <Ionicons name={'chevron-down-outline'} size={24} color={'black'} />
@@ -50,7 +58,7 @@ const CustomHeader = () => {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-
+        backgroundColor: 'white',
     },
     container: {
         height: 80,
@@ -72,6 +80,7 @@ const styles = StyleSheet.create({
     },
     titleContainer: {
         flex: 1,
+        paddingLeft: 15,
     },
     nameView: {
         flexDirection: 'row',
