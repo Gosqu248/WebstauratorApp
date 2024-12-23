@@ -34,7 +34,7 @@ const CustomHeader = () => {
           </TouchableOpacity>
           <TouchableOpacity style={styles.titleContainer}>
               <View style={styles.nameView}>
-                  <Text style={styles.subtitle}>{address}</Text>
+                  <Text style={styles.subtitle}>{address ? address : 'Loading'}</Text>
                   <Ionicons name={'chevron-down-outline'} size={24} color={'black'} />
               </View>
           </TouchableOpacity>
@@ -50,17 +50,17 @@ const CustomHeader = () => {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: 'white',
 
     },
     container: {
-        height: 120,
+        height: 80,
         backgroundColor: 'white',
         flexDirection: "row",
         gap: 20,
         alignItems: 'flex-end',
         justifyContent: 'space-between',
         paddingHorizontal: 20,
+        paddingBottom: 5,
     },
     main: {
         flexDirection: 'row',

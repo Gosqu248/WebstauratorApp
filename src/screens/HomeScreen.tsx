@@ -87,9 +87,7 @@ export function HomeScreen({ navigation }: HomeScreenProps) {
             style={styles.container}
         >
             <View style={styles.filterContainer}>
-
                 {renderContent()}
-
             </View>
 
         </LinearGradient>
@@ -99,12 +97,11 @@ export function HomeScreen({ navigation }: HomeScreenProps) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 120,
-        paddingBottom: 50,
+        paddingTop: 80,
         paddingHorizontal: 10,
     },
     filterContainer: {
-        marginBottom: 20,
+        marginBottom: 5,
     },
     filterPicker: {
         height: 50,
