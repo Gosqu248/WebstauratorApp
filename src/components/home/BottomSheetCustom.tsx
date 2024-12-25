@@ -1,4 +1,3 @@
-// src/components/home/BottomSheetCustom.tsx
 import React, {forwardRef, useCallback, useMemo} from 'react';
 import {Text, StyleSheet, View, TouchableOpacity} from 'react-native';
 import {BottomSheetBackdrop, BottomSheetModal, BottomSheetView, useBottomSheetModal} from '@gorhom/bottom-sheet';
@@ -6,6 +5,7 @@ import {Link} from "expo-router";
 import {Ionicons} from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import {useTranslation} from "react-i18next";
+import {useNavigation} from "@react-navigation/native";
 
 export type Ref = BottomSheetModal;
 
@@ -14,6 +14,12 @@ const BottomSheetCustom = forwardRef<Ref>((props, ref) => {
     const renderBackdrop = useCallback((props: any) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />, []);
     const { dismiss } = useBottomSheetModal();
     const { t } = useTranslation();
+    const navigation = useNavigation();
+
+    const goToLocationSearch = () => {
+        navigation.navigate('LocationSearch'); // Navigate to the LocationSearch screen
+    };
+
 
     return (
         <BottomSheetModal
@@ -33,18 +39,14 @@ const BottomSheetCustom = forwardRef<Ref>((props, ref) => {
                     </TouchableOpacity>
                 </View>
 
-                <Text style={styles.subheader}>Your Location</Text>
-                <Link href={'/(modal)/location-search'} asChild>
-                    <TouchableOpacity>
-                        <View style={styles.item}>
-                            <Ionicons name="location-outline" size={20} color={Colors.medium} />
-                            <Text style={{ flex: 1 }}>{t('currentLocation')}</Text>
-                            <Ionicons name="chevron-forward" size={20} color={Colors.primary} />
-                        </View>
-                    </TouchableOpacity>
-                </Link>
-
-
+                <Text style={styles.subheader}>{t('yourLocation')}</Text>
+                <TouchableOpacity onPress={goToLocationSearch}>
+                    <View style={styles.item}>
+                        <Ionicons name="location-outline" size={20} color={Colors.medium} />
+                        <Text style={{ flex: 1 }}>{t('currentLocation')}</Text>
+                        <Ionicons name="chevron-forward" size={20} color={Colors.primary} />
+                    </View>
+                </TouchableOpacity>
             </BottomSheetView>
         </BottomSheetModal>
     );

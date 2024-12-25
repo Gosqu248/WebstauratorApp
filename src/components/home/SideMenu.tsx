@@ -1,4 +1,3 @@
-// src/components/home/SideMenu.tsx
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';

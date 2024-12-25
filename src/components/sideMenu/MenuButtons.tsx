@@ -1,4 +1,3 @@
-// src/components/home/MenuButtons.tsx
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -6,8 +5,7 @@ import Colors from "@/constants/Colors";
 import {FontAwesome, Ionicons} from '@expo/vector-icons';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import i18n from "i18next";
-import config from "@/src/config"
+
 const MenuButtons = () => {
     const { t, i18n } = useTranslation();
 

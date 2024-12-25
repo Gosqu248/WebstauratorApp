@@ -7,7 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
 import '@/src/language/i18n';
 import RestaurantList from '../components/home/RestaurantList';
-import {SearchedRestaurant} from "@/src/interface/searchedRestaurant";  // New component for displaying restaurants
+import {SearchedRestaurant} from "@/src/interface/searchedRestaurant";
 
 type HomeScreenProps = {
     navigation: NativeStackNavigationProp<any>;
@@ -21,6 +21,8 @@ export function HomeScreen({ navigation }: HomeScreenProps) {
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [filter, setFilter] = useState<'all' | 'delivery' | 'pickup'>('all');
+    const [restaurantsQuantity, setRestaurantsQuantity] = useState<number>(0);
+
     const { t } = useTranslation();
 
     const fetchRestaurantData = async () => {
@@ -34,6 +36,7 @@ export function HomeScreen({ navigation }: HomeScreenProps) {
 
             setRestaurants(response.data);
             setFilteredRestaurants(response.data);
+            setRestaurantsQuantity(response.data.length);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An error occurred');
         } finally {
@@ -64,7 +67,12 @@ export function HomeScreen({ navigation }: HomeScreenProps) {
             return <Text style={styles.loadingText}>{error}</Text>;
         }
 
-        return <RestaurantList restaurants={filteredRestaurants} />;
+        return (
+            <>
+                <Text style={styles.orderBY}>{t('order')}{restaurantsQuantity} {t('restaurants')}</Text>
+                <RestaurantList restaurants={filteredRestaurants} />
+            </>
+        )
     };
 
     return (
@@ -88,6 +96,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
     },
     filterContainer: {
+    },
+    orderBY: {
+        color: '#000',
+        fontSize: 20,
+        fontWeight: 'bold',
+        padding: 10,
     },
     filterPicker: {
         height: 50,

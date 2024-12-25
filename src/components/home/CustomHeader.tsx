@@ -1,9 +1,10 @@
-import {View, Text, SafeAreaView, StyleSheet, TouchableOpacity, Image} from 'react-native'
-import React, {useEffect, useRef, useState} from 'react'
-import {Ionicons} from "@expo/vector-icons";
+import React, { useEffect, useRef, useState } from 'react';
+import { View, Text, SafeAreaView, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
-import {BottomSheetModal} from "@gorhom/bottom-sheet";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import BottomSheetCustom from "@/src/components/home/BottomSheetCustom";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type CustomHeaderProps = {
     openDrawer: () => void;
@@ -19,47 +20,55 @@ const CustomHeader = ({ openDrawer }: CustomHeaderProps) => {
         bottomSheetModalRef.current?.present();
     }
 
-
-
     useEffect(() => {
-        (async () => {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                setErrorMsg('Permission to access location was denied');
-                return;
-            }
+        const checkSelectedAddress = async () => {
+            try {
+                const savedAddress = await AsyncStorage.getItem('selectedAddress');
+                if (savedAddress && savedAddress !== address) {
+                    setAddress(savedAddress);
+                } else {
+                    let { status } = await Location.requestForegroundPermissionsAsync();
+                    if (status !== 'granted') {
+                        setErrorMsg('Permission to access location was denied');
+                        return;
+                    }
 
-            let location = await Location.getCurrentPositionAsync({});
-            setLocation(location);
-            if (location) {
-                let address = await Location.reverseGeocodeAsync(location.coords);
-                setAddress(address[0]?.street + '' + address[0]?.streetNumber + ', ' + address[0]?.city);
+                    let location = await Location.getCurrentPositionAsync({});
+                    setLocation(location);
+                    if (location) {
+                        let address = await Location.reverseGeocodeAsync(location.coords);
+                        setAddress(address[0]?.street + ' ' + address[0]?.streetNumber + ', ' + address[0]?.city);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching address:', error);
             }
-        })();
+        };
+
+        checkSelectedAddress();
     }, []);
 
     return (
-
-            <SafeAreaView style={styles.safeArea}>
-                <BottomSheetCustom ref={bottomSheetModalRef} />
-                <View style={styles.container}>
-                    <View style={styles.main}>
-                        <TouchableOpacity onPress={() => {}}>
-                            <Image style={styles.image} source={require('../../../assets/images/webstaurator-logo.png')} />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.titleContainer} onPress={openModal}>
-                            <View style={styles.nameView}>
-                                <Text style={styles.subtitle}>{address ? address : 'Loading'}</Text>
-                                <Ionicons name={'chevron-down-outline'} size={24} color={'black'} />
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={openDrawer}>
-                            <Ionicons name={'menu'} size={30} color={'black'} />
-                        </TouchableOpacity>
-                    </View>
+        <SafeAreaView style={styles.safeArea}>
+            <BottomSheetCustom ref={bottomSheetModalRef} />
+            <View style={styles.container}>
+                <View style={styles.main}>
+                    <TouchableOpacity onPress={() => {}}>
+                        <Image style={styles.image} source={require('../../../assets/images/webstaurator-logo.png')} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.titleContainer} onPress={openModal}>
+                        <View style={styles.nameView}>
+                            <Text style={styles.subtitle}>{address ? address : 'Loading'}</Text>
+                            <Ionicons name={'chevron-down-outline'} size={24} color={'black'} />
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={openDrawer}>
+                        <Ionicons name={'menu'} size={30} color={'black'} />
+                    </TouchableOpacity>
                 </View>
-            </SafeAreaView>
-  );
+            </View>
+        </SafeAreaView>
+    );
 };
 
 const styles = StyleSheet.create({
@@ -105,5 +114,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         padding: 5,
     },
-})
-export default CustomHeader
+});
+
+export default CustomHeader;
