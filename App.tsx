@@ -11,6 +11,7 @@ import SideMenu from "@/src/components/home/SideMenu";
 import {Ionicons} from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import LocationSearch from "@/src/screens/LocationSearch";
+import RestaurantDetails from "@/src/screens/RestaurantDetails";
 
 
 const Stack = createNativeStackNavigator();
@@ -46,14 +47,14 @@ export default function App() {
                                 options={{
                                     presentation: 'fullScreenModal',
                                     headerTitle: 'Search location',
-                                    headerLeft: () => (
-                                        <TouchableOpacity
-                                            onPress={() => {
-                                                navigation.goBack();
-                                            }}>
-                                            <Ionicons name='close-outline' size={28} color={Colors.primary}/>
-                                        </TouchableOpacity>
-                                    ),
+                                }}
+                            />
+                            <Stack.Screen
+                                name="RestaurantDetails"
+                                component={RestaurantDetails}
+                                options={{
+                                    presentation: 'fullScreenModal',
+                                    headerTitle: 'RestaurantDetails',
                                 }}
                             />
                         </Stack.Navigator>

@@ -1,46 +1,26 @@
 import React, { useState } from 'react';
 import { View, TextInput, StyleSheet, FlatList, TouchableOpacity, Text } from 'react-native';
-import config from "@/src/config";
 import {Ionicons} from "@expo/vector-icons";
 import {useTranslation} from "react-i18next";
+import { fetchSuggestions, fetchCoordinates } from "@/src/services/locationService";
 
 const PlaceAutocomplete = ({ onLocationSelected, address }) => {
     const [query, setQuery] = useState('');
     const [suggestions, setSuggestions] = useState([]);
     const { t } = useTranslation();
 
-    const fetchSuggestions = async (partialName) => {
-        try {
-            const response = await fetch(`${config.backendUrl}/suggestions/get?partialName=${encodeURIComponent(partialName)}`);
-            const data = await response.json();
-            setSuggestions(data);
-        } catch (error) {
-            console.error('Error fetching suggestions:', error);
-        }
-    };
-
-    const fetchCoordinates = async (location) => {
-        try {
-            const response = await fetch(`${config.backendUrl}/suggestions/getCoordinates?address=${encodeURIComponent(location)}`);
-            address(location)
-            return await response.json();
-        } catch (error) {
-            console.error('Error fetching coordinates:', error);
-            return null;
-        }
-    };
-
     const handleInputChange = (text) => {
         setQuery(text);
         if (text.length >= 1) {
-            fetchSuggestions(text);
+            fetchSuggestions(text).then(setSuggestions)
         } else {
             setSuggestions([]);
         }
     };
 
     const searchLocation = async () => {
-        const coordinates = await fetchCoordinates(query);
+        const coordinates = await fetchCoordinates(query).then(address(query));
+
         if (coordinates && onLocationSelected) {
             onLocationSelected(coordinates);
         }
@@ -49,7 +29,7 @@ const PlaceAutocomplete = ({ onLocationSelected, address }) => {
     const handleSelectSuggestion = async (suggestion ) => {
         setQuery(suggestion);
         setSuggestions([]);
-        const coordinates = await fetchCoordinates(suggestion);
+        const coordinates = await fetchCoordinates(suggestion).then(address(suggestion));
         if (coordinates && onLocationSelected) {
             onLocationSelected(coordinates);
         }

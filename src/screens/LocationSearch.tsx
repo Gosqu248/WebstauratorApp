@@ -5,13 +5,16 @@ import { useNavigation } from '@react-navigation/native';
 import PlaceAutocomplete from '@/src/components/searchLocation/PlaceAutocomplete';
 import Colors from '@/constants/Colors';
 import {useTranslation} from "react-i18next";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import {useAddressStore} from "@/src/zustand/address";
+import {useCoordinatesStore} from "@/src/zustand/coordinates";
 
 const LocationSearch = () => {
-    const [address, setAddress] = useState('');
+    const setAddress = useAddressStore((state) => state.setAddress);
+    const setCoordinates = useCoordinatesStore((state) => state.setCoordinates);
     const navigation = useNavigation();
     const mapRef = useRef(null);
     const { t } = useTranslation();
+    const [prvAddress, setPrvAddress] = useState('');
 
     const [location, setLocation] = useState({
         latitude: 50.012100,
@@ -20,7 +23,7 @@ const LocationSearch = () => {
         longitudeDelta: 0.03,
     });
 
-    const handleLocationChange = (selectedLocation, address) => {
+    const handleLocationChange = (selectedLocation) => {
         const newRegion = {
             latitude: selectedLocation.lat,
             longitude: selectedLocation.lon,
@@ -34,18 +37,12 @@ const LocationSearch = () => {
     };
 
     const handleAddress = (address) => {
-        setAddress(address)
+        setPrvAddress(address)
     }
 
     const confirmLocation = async () => {
-        if (address) {
-            try {
-                await AsyncStorage.setItem('selectedAddress', address);
-                console.log('Address saved:', address);
-            } catch (error) {
-                console.error('Error saving address:', error);
-            }
-        }
+        setCoordinates(location);
+        setAddress(prvAddress);
         navigation.goBack();
     }
 

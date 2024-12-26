@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {View, Text, StyleSheet, FlatList, Image} from 'react-native';
+import {View, Text, StyleSheet, FlatList, Image, TouchableOpacity} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { SearchedRestaurant } from '@/src/interface/searchedRestaurant';
 import axios from 'axios';
@@ -8,6 +8,7 @@ import { ImageAndLogo } from '@/src/interface/imageAndLogo';
 import {FontAwesome} from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import {Delivery} from "@/src/interface/delivery";
+import {useNavigation} from "@react-navigation/native";
 
 type RestaurantListProps = {
     restaurants: SearchedRestaurant[];
@@ -34,6 +35,7 @@ const RestaurantList = ({ restaurants }: RestaurantListProps) => {
         const [logo, setLogo] = useState<string | null>(null);
         const [distance, setDistance] = useState<string | null>(null);
         const [delivery, setDelivery] = useState<Delivery | null>(null);
+        const navigation = useNavigation();
 
         const fetchRestaurantImages = async () => {
             const urls = await fetchRestaurantImageAndLogo(item.restaurantId);
@@ -52,6 +54,10 @@ const RestaurantList = ({ restaurants }: RestaurantListProps) => {
             }
         }
 
+        const goToRestaurant = () => {
+            navigation.navigate('RestaurantDetails', { restaurantId: item.restaurantId });
+        }
+
 
         useEffect(() => {
             const fetchData = async () => {
@@ -65,42 +71,47 @@ const RestaurantList = ({ restaurants }: RestaurantListProps) => {
         }, [item.restaurantId]);
 
 
+
+
+
         return (
-            <View style={styles.restaurantCard}>
-                <View style={styles.imageContainer}>
-                    {image && <Image source={{ uri: image }} style={styles.restaurantImage} />}
-                    {logo && (
-                        <View style={styles.logoContainer}>
-                            <Image source={{ uri: logo }} style={styles.logo} />
-                        </View>
-                    )}
-                    <View style={styles.ratingContainer}>
-                        <FontAwesome name="star" size={16} color={Colors.iconOrange}/>
-                        <Text style={styles.ratingText}>{item.rating}</Text>
-                    </View>
-                </View>
-                <View style={styles.infoContainer}>
-                    <Text style={styles.restaurantName}>{item.name}</Text>
-                    <Text style={styles.category}>{item.category}</Text>
-                    <View style={styles.bottomContainer}>
-                        <View style={styles.option}>
-                            <FontAwesome name="map-marker" size={16} color={Colors.iconOrange}/>
-                            <Text style={styles.distance}>{distance}</Text>
-                        </View>
-
-                        <View style={styles.option}>
-                            <FontAwesome name="money" size={16} color={Colors.iconOrange} />
-                            <Text style={styles.distance}>Min. {delivery?.minimumPrice.toFixed(2)} zł</Text>
-                        </View>
-
-                        <View style={styles.option}>
-                            <FontAwesome name="clock-o" size={16} color={Colors.iconOrange} />
-                            <Text style={styles.distance}>{delivery?.deliveryMinTime} - {delivery?.deliveryMaxTime} min</Text>
+            <TouchableOpacity onPress={goToRestaurant}>
+                <View style={styles.restaurantCard}>
+                    <View style={styles.imageContainer}>
+                        {image && <Image source={{ uri: image }} style={styles.restaurantImage} />}
+                        {logo && (
+                            <View style={styles.logoContainer}>
+                                <Image source={{ uri: logo }} style={styles.logo} />
+                            </View>
+                        )}
+                        <View style={styles.ratingContainer}>
+                            <FontAwesome name="star" size={16} color={Colors.iconOrange}/>
+                            <Text style={styles.ratingText}>{item.rating}</Text>
                         </View>
                     </View>
-                </View>
+                    <View style={styles.infoContainer}>
+                        <Text style={styles.restaurantName}>{item.name}</Text>
+                        <Text style={styles.category}>{item.category}</Text>
+                        <View style={styles.bottomContainer}>
+                            <View style={styles.option}>
+                                <FontAwesome name="map-marker" size={16} color={Colors.iconOrange}/>
+                                <Text style={styles.distance}>{distance}</Text>
+                            </View>
 
-            </View>
+                            <View style={styles.option}>
+                                <FontAwesome name="money" size={16} color={Colors.iconOrange} />
+                                <Text style={styles.distance}>Min. {delivery?.minimumPrice.toFixed(2)} zł</Text>
+                            </View>
+
+                            <View style={styles.option}>
+                                <FontAwesome name="clock-o" size={16} color={Colors.iconOrange} />
+                                <Text style={styles.distance}>{delivery?.deliveryMinTime} - {delivery?.deliveryMaxTime} min</Text>
+                            </View>
+                        </View>
+                    </View>
+                </View>
+            </TouchableOpacity>
+
         );
     };
 

@@ -4,17 +4,21 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import BottomSheetCustom from "@/src/components/home/BottomSheetCustom";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAddressStore } from '@/src/zustand/address';
+import {useCoordinatesStore} from "@/src/zustand/coordinates";
 
 type CustomHeaderProps = {
     openDrawer: () => void;
 };
 
 const CustomHeader = ({ openDrawer }: CustomHeaderProps) => {
-    const [address, setAddress] = useState<string | null>(null);
     const [location, setLocation] = useState<Location.LocationObject | null>(null);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+    const address = useAddressStore((state) => state.address);
+    const setAddress = useAddressStore((state) => state.setAddress);
+    const coordinates = useCoordinatesStore((state) => state.coordinates);
+    const setCoordinates = useCoordinatesStore((state) => state.setCoordinates);
 
     const openModal = () => {
         bottomSheetModalRef.current?.present();
@@ -23,10 +27,7 @@ const CustomHeader = ({ openDrawer }: CustomHeaderProps) => {
     useEffect(() => {
         const checkSelectedAddress = async () => {
             try {
-                const savedAddress = await AsyncStorage.getItem('selectedAddress');
-                if (savedAddress && savedAddress !== address) {
-                    setAddress(savedAddress);
-                } else {
+
                     let { status } = await Location.requestForegroundPermissionsAsync();
                     if (status !== 'granted') {
                         setErrorMsg('Permission to access location was denied');
@@ -37,9 +38,10 @@ const CustomHeader = ({ openDrawer }: CustomHeaderProps) => {
                     setLocation(location);
                     if (location) {
                         let address = await Location.reverseGeocodeAsync(location.coords);
+                        setCoordinates(location.coords);
                         setAddress(address[0]?.street + ' ' + address[0]?.streetNumber + ', ' + address[0]?.city);
                     }
-                }
+
             } catch (error) {
                 console.error('Error fetching address:', error);
             }
