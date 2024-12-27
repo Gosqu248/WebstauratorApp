@@ -173,4 +173,5 @@ export interface TranslationKeys {
     paymentId: string;
     loading: string;
     currentLocation: string;
+    errorOrNotFound: string;
 }

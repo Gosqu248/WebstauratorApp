@@ -6,22 +6,21 @@ import {useNavigation, useRoute} from "@react-navigation/native";
 import axios from "axios";
 import config from "@/src/config";
 import {Restaurant} from "@/src/interface/restaurant";
-import {Ionicons} from "@expo/vector-icons";
+import {FontAwesome, Ionicons} from "@expo/vector-icons";
 import RestaurantItems from "@/src/components/restaurantDetails/RestaurantItems";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import CategoryScrollVIew from "@/src/components/restaurantDetails/CategoryScrollVIew";
+import CategoryScrollView from "@/src/components/restaurantDetails/CategoryScrollVIew";
+import StartRating from "@/src/components/restaurantDetails/StartRating";
+import {useDeliveryStore} from "@/src/zustand/delivery";
+import DeliveryView from "@/src/components/restaurantDetails/DeliveryView";
 
 const RestaurantDetails = () => {
     const [restaurant, setRestaurant] = useState<Restaurant | null>(null)
     const route = useRoute();
-    const { restaurantId } = route.params;
+    const { restaurantId} = route.params;
     const navigation = useNavigation();
-    const scrollRef = useRef<ScrollView>(null);
-    const itemsRef = useRef<TouchableOpacity[]>([]);
-    const [categories, setCategories] = useState([]);
-    const [activeIndex, setActiveIndex] = useState(0);
-
     const opacity = useSharedValue(0);
+    const { deliveryType } = useDeliveryStore();
 
     const fetchRestaurantData = async () => {
         const response = await axios.get<Restaurant>(`${config.backendUrl}/restaurant/getRestaurant?id=${restaurantId}`);
@@ -32,18 +31,13 @@ const RestaurantDetails = () => {
         }
     }
 
-    const animatedStyles = useAnimatedStyle(() => ({
-        opacity: opacity.value,
-    }));
-
-
-    const selectCategory = (index: number) => {
-        const selected = itemsRef.current[index];
-        setActiveIndex(index);
-
-        selected.measure((x) => {
-            scrollRef.current?.scrollTo({ x: x - 16, y: 0, animated: true });
-        });
+    const onScroll = (event: any) => {
+        const y = event.nativeEvent.contentOffset.y;
+        if (y > 350) {
+            opacity.value = withTiming(1);
+        } else {
+            opacity.value = withTiming(0);
+        }
     };
 
     useLayoutEffect(() => {
@@ -61,12 +55,9 @@ const RestaurantDetails = () => {
                     <TouchableOpacity  style={styles.roundButton}>
                         <Ionicons name="share-outline" size={27} color={Colors.iconOrange} />
                     </TouchableOpacity>
-                    <TouchableOpacity  style={styles.roundButton}>
-                        <Ionicons name="search-outline" size={27} color={Colors.iconOrange} />
-                    </TouchableOpacity>
+
                 </View>
             ),
-
         })
     }, []);
 
@@ -74,37 +65,65 @@ const RestaurantDetails = () => {
         fetchRestaurantData();
     }, []);
 
-
-
     return (
-        <>
-            <ParallaxScrollView backgroundColor={'#fff'}
-                                style={{flex:1}}
-                                parallaxHeaderHeight={250}
-                                renderBackground={() => <Image source={{uri: restaurant?.imageUrl}} style={{width: `100%`, height: `100%`}}/>}
-                                stickyHeaderHeight={100}
-                                contentBackgroundColor={Colors.lightGrey}
-                                renderStickyHeader={() => <View key="sticky-header" style={styles.stickySection}>
-                                    <Text style={styles.stickySectionText}>{restaurant?.name}</Text>
-                                </View>}
-            >
-                <View style={styles.detailsContainer}>
-                    <RestaurantItems restaurantId={restaurantId} />
+        <ParallaxScrollView backgroundColor={'#ffffff'}
+                            style={{flex:1}}
+                            scrollEvent={onScroll}
+                            parallaxHeaderHeight={250}
+                            renderBackground={() => <Image source={{uri: restaurant?.imageUrl}} style={{width: '100%', height: '100%'}}/>}
+                            stickyHeaderHeight={100}
+                            contentBackgroundColor={Colors.lightGrey}
+                            renderStickyHeader={() => <View key="sticky-header" style={styles.stickySection}>
+                                <Text style={styles.stickySectionText}>{restaurant?.name}</Text>
+                            </View>}
+        >
+            <View style={styles.detailsContainer}>
+                <View style={styles.info}>
+                    <Image source={{uri: restaurant?.logoUrl}} style={styles.logo}/>
+                    {/*<StartRating rating={rating}></StartRating>*/}
+                    <View style={styles.info}>
+                        <TouchableOpacity style={styles.infoItem}>
+                            <FontAwesome name="info" size={24} color={'#1e1e1e'} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.infoItem}>
+                            <FontAwesome name="heart-o" size={24} color={'#1e1e1e'} />
+                        </TouchableOpacity>
+                    </View>
                 </View>
-            </ParallaxScrollView>
-            <Animated.View style={[styles.stickySegments, animatedStyles]}>
-                <CategoryScrollVIew></CategoryScrollVIew>
-            </Animated.View>
-        </>
+                <DeliveryView></DeliveryView>
+                <CategoryScrollView />
+                <RestaurantItems restaurantId={restaurantId} />
+            </View>
+        </ParallaxScrollView>
     )
 }
 
 const styles = StyleSheet.create({
     detailsContainer: {
-        backgroundColor: Colors.lightGrey,
+        backgroundColor: '#ffffff',
+    },
+    info: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 16,
+    },
+    infoItem: {
+        width: 50, // Set fixed width
+        height: 50, // Set fixed height
+        borderWidth: 2,
+        borderColor: Colors.grey,
+        borderRadius: 2,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    logo: {
+        width: 40,
+        height: 40,
+        borderRadius: 30,
+        margin: 16,
     },
     stickySection: {
-        backgroundColor: '#fff',
         marginLeft: 45,
         height: 100,
         justifyContent: 'flex-end',
@@ -113,7 +132,7 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 20,
-        backgroundColor: '#fff',
+        backgroundColor: '#ffffff',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -144,7 +163,7 @@ const styles = StyleSheet.create({
         margin: 16,
     },
     item: {
-        backgroundColor: '#fff',
+        backgroundColor: '#ffffff',
         padding: 16,
         flexDirection: 'row',
     },

@@ -4,10 +4,11 @@ import axios from "axios";
 import config from "@/src/config";
 import {useRoute} from "@react-navigation/native";
 import Colors from "@/constants/Colors";
+import {Ionicons} from "@expo/vector-icons";
 
 const CategoryScrollView = () => {
     const [categories, setCategories] = useState([]);
-    const [activeIndex, setActiveIndex] = useState(0);
+    const [activeIndex, setActiveIndex] = useState<number | null>(null);
     const route = useRoute();
     const { restaurantId } = route.params;
 
@@ -15,22 +16,23 @@ const CategoryScrollView = () => {
     const itemsRef = useRef<TouchableOpacity[]>([]);
 
     const fetchCategories = async () => {
-        const response = await axios.get(`${config.backendUrl}/menu/menuCategories?restaurantId=${restaurantId}`);
-        if (response) {
-            setCategories(response.data);
-        } else {
-            console.error('Error fetching categories');
+        try {
+            const response = await axios.get(`${config.backendUrl}/menu/menuCategories?restaurantId=${restaurantId}`);
+            setCategories(response.data || []);
+        } catch (error) {
+            console.error('Error fetching categories:', error);
         }
-    }
-
+    };
 
     const selectCategory = (index: number) => {
-        const selected = itemsRef.current[index];
-        setActiveIndex(index);
-
-        selected.measure((x) => {
-            scrollRef.current?.scrollTo({ x: x - 16, y: 0, animated: true });
-        });
+        if (activeIndex === index) {
+            setActiveIndex(null);
+        } else {
+            setActiveIndex(index);
+            itemsRef.current[index]?.measure((x, y, width, height, pageX) => {
+                scrollRef.current?.scrollTo({ x: pageX - 16, y: 0, animated: true });
+            });
+        }
     };
 
     useEffect(() => {
@@ -39,14 +41,23 @@ const CategoryScrollView = () => {
 
     return (
         <View style={styles.segmentsShadow}>
-            <ScrollView ref={scrollRef} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.segmentScrollview}>
+            <ScrollView
+                ref={scrollRef}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.segmentScrollview}>
+                <TouchableOpacity  style={styles.roundButton}>
+                    <Ionicons name="search-outline" size={27} color={Colors.iconOrange} />
+                </TouchableOpacity>
                 {categories.map((item, index) => (
                     <TouchableOpacity
                         ref={(ref) => (itemsRef.current[index] = ref!)}
                         key={index}
                         style={activeIndex === index ? styles.segmentButtonActive : styles.segmentButton}
                         onPress={() => selectCategory(index)}>
-                        <Text style={activeIndex === index ? styles.segmentTextActive : styles.segmentText}>{item.category}</Text>
+                        <Text style={activeIndex === index ? styles.segmentTextActive : styles.segmentText}>
+                            {item}
+                        </Text>
                     </TouchableOpacity>
                 ))}
             </ScrollView>
@@ -56,44 +67,45 @@ const CategoryScrollView = () => {
 
 const styles = StyleSheet.create({
     segmentsShadow: {
-        backgroundColor: '#fff',
+        backgroundColor: 'transparent',
         justifyContent: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 4,
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 5,
         width: '100%',
-        height: '100%',
+        height: 50,
+    },
+    roundButton: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: '#ffffff',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     segmentButton: {
         paddingHorizontal: 16,
-        paddingVertical: 4,
-        borderRadius: 50,
+        paddingVertical: 8,
+        borderRadius: 20,
+        backgroundColor: Colors.lightGrey,
     },
     segmentText: {
         color: Colors.primary,
-        fontSize: 16,
+        fontSize: 14,
     },
     segmentButtonActive: {
         backgroundColor: Colors.primary,
         paddingHorizontal: 16,
-        paddingVertical: 4,
-        borderRadius: 50,
+        paddingVertical: 8,
+        borderRadius: 20,
     },
     segmentTextActive: {
         color: '#fff',
         fontWeight: 'bold',
-        fontSize: 16,
+        fontSize: 14,
     },
     segmentScrollview: {
         paddingHorizontal: 16,
         alignItems: 'center',
-        gap: 20,
-        paddingBottom: 4,
+        gap: 10,
     },
 });
+
 export default CategoryScrollView;

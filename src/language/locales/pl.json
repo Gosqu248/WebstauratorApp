@@ -173,4 +173,5 @@
   "paymentId": "ID płatności",
   "loading": "Ładowanie...",
   "currentLocation": "Aktualna lokalizacja",
+  "errorOrNotFound": "Nie znaleziono restauracji lub adres jest nieprawidłowy",
 }

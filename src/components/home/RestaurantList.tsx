@@ -1,87 +1,42 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {View, Text, StyleSheet, FlatList, Image, TouchableOpacity} from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { SearchedRestaurant } from '@/src/interface/searchedRestaurant';
-import axios from 'axios';
-import config from '@/src/config';
-import { ImageAndLogo } from '@/src/interface/imageAndLogo';
 import {FontAwesome} from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import {Delivery} from "@/src/interface/delivery";
 import {useNavigation} from "@react-navigation/native";
+import {useRestaurantStore} from "@/src/zustand/restaurantStore";
+import {Restaurant} from "@/src/interface/restaurant";
+import {useDeliveryStore} from "@/src/zustand/delivery";
 
-type RestaurantListProps = {
-    restaurants: SearchedRestaurant[];
-};
-
-const RestaurantList = ({ restaurants }: RestaurantListProps) => {
+const RestaurantList = () => {
     const { t } = useTranslation();
-    const [isDataLoaded, setIsDataLoaded] = useState(false);
+    const { restaurants } = useRestaurantStore();
+    const navigation = useNavigation();
+    const { deliveryType } = useDeliveryStore();
+    const filteredRestaurants = restaurants.filter((restaurant) =>
+        deliveryType === 'pickup' ? restaurant.pickup : true
+    );
 
-    const fetchRestaurantImageAndLogo = async (restaurantId: number) => {
-        try {
-            const response = await axios.get<ImageAndLogo>(
-                `${config.backendUrl}/restaurant/getLogoAndImage?id=${restaurantId}`
-            );
-            return response.data;
-        } catch (err) {
-            console.error(err);
-            return null;
-        }
-    };
+    const RestaurantItem = ({ item }: { item: Restaurant }) => {
+        const distance = item.distance > 1
+            ? `${item.distance?.toFixed(1)} km`
+            : `${(item.distance * 1000).toFixed(0)} m`;
 
-    const RestaurantItem = ({ item }: { item: SearchedRestaurant }) => {
-        const [image, setImage] = useState<string | null>(null);
-        const [logo, setLogo] = useState<string | null>(null);
-        const [distance, setDistance] = useState<string | null>(null);
-        const [delivery, setDelivery] = useState<Delivery | null>(null);
-        const navigation = useNavigation();
-
-        const fetchRestaurantImages = async () => {
-            const urls = await fetchRestaurantImageAndLogo(item.restaurantId);
-            if (urls) {
-                setImage(urls.imageUrl);
-                setLogo(urls.logoUrl);
-            }
-        };
-
-        const fetchDelivery = async () => {
-            const response = await axios.get<Delivery>(`${config.backendUrl}/delivery?restaurantId=${item.restaurantId}`);
-            if (response) {
-                setDelivery(response.data);
-            } else {
-                console.error('Error fetching delivery');
-            }
-        }
-
+        console.log('item', item)
         const goToRestaurant = () => {
-            navigation.navigate('RestaurantDetails', { restaurantId: item.restaurantId });
-        }
-
-
-        useEffect(() => {
-            const fetchData = async () => {
-                await fetchRestaurantImages();
-                await fetchDelivery();
-                const formattedDistance = item.distance > 1 ? `${item.distance.toFixed(1)} km` : `${(item.distance * 1000).toFixed(0)} m`;
-                setDistance(formattedDistance);
-                setIsDataLoaded(true);
-            };
-            fetchData();
-        }, [item.restaurantId]);
-
-
-
-
+            navigation.navigate('RestaurantDetails', {
+                restaurantId: item.restaurantId,
+            });
+        };
 
         return (
             <TouchableOpacity onPress={goToRestaurant}>
                 <View style={styles.restaurantCard}>
                     <View style={styles.imageContainer}>
-                        {image && <Image source={{ uri: image }} style={styles.restaurantImage} />}
-                        {logo && (
+                        {item.imageUrl && <Image source={{ uri: item.imageUrl }} style={styles.restaurantImage} />}
+                        {item.logoUrl && (
                             <View style={styles.logoContainer}>
-                                <Image source={{ uri: logo }} style={styles.logo} />
+                                <Image source={{ uri: item.logoUrl }} style={styles.logo} />
                             </View>
                         )}
                         <View style={styles.ratingContainer}>
@@ -100,24 +55,23 @@ const RestaurantList = ({ restaurants }: RestaurantListProps) => {
 
                             <View style={styles.option}>
                                 <FontAwesome name="money" size={16} color={Colors.iconOrange} />
-                                <Text style={styles.distance}>Min. {delivery?.minimumPrice.toFixed(2)} zł</Text>
+                                <Text style={styles.distance}>Min. {item.delivery?.minimumPrice.toFixed(2)} zł</Text>
                             </View>
 
                             <View style={styles.option}>
                                 <FontAwesome name="clock-o" size={16} color={Colors.iconOrange} />
-                                <Text style={styles.distance}>{delivery?.deliveryMinTime} - {delivery?.deliveryMaxTime} min</Text>
+                                <Text style={styles.distance}>{item.delivery?.deliveryMinTime} - {item.delivery?.deliveryMaxTime} min</Text>
                             </View>
                         </View>
                     </View>
                 </View>
             </TouchableOpacity>
-
         );
     };
 
     return (
         <FlatList
-            data={restaurants}
+            data={filteredRestaurants}
             renderItem={({ item }) => <RestaurantItem item={item} />}
             keyExtractor={(item) => item.restaurantId.toString()}
         />

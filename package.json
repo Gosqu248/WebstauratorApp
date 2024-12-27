@@ -26,6 +26,7 @@
     "expo-status-bar": "~2.0.0",
     "i18next": "^24.2.0",
     "i18next-http-backend": "^3.0.1",
+    "lottie-react-native": "^7.1.0",
     "prop-types": "^15.8.1",
     "react": "18.3.1",
     "react-i18next": "^15.2.0",
@@ -33,6 +34,7 @@
     "react-native-autocomplete-input": "^5.5.2",
     "react-native-gesture-handler": "~2.20.2",
     "react-native-maps": "^1.18.0",
+    "react-native-parallax-scroll-view": "^0.21.3",
     "react-native-reanimated": "~3.16.1",
     "zustand": "^5.0.2"
   },

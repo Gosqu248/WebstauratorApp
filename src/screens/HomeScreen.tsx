@@ -1,93 +1,71 @@
-import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, Text} from 'react-native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import axios from 'axios';
-import config from '../config';
+import React, { useEffect } from 'react';
+import { View, StyleSheet, Text } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
 import '@/src/language/i18n';
 import RestaurantList from '../components/home/RestaurantList';
-import {SearchedRestaurant} from "@/src/interface/searchedRestaurant";
-import {useDeliveryStore} from "@/src/zustand/delivery";
+import { useRestaurantStore } from '@/src/zustand/restaurantStore';
+import { useAddressEffect } from '@/src/hooks/useAddressEffect';
+import { useDeliveryStore } from '@/src/zustand/delivery';
+import LottieView from "lottie-react-native";
 
-type HomeScreenProps = {
-    navigation: NativeStackNavigationProp<any>;
-};
-
-
-
-export function HomeScreen({ navigation }: HomeScreenProps) {
-    const [restaurants, setRestaurants] = useState<SearchedRestaurant[]>([]);
-    const [filteredRestaurants, setFilteredRestaurants] = useState<SearchedRestaurant[]>([]);
-    const [error, setError] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [restaurantsQuantity, setRestaurantsQuantity] = useState<number>(0);
-    const { deliveryType } = useDeliveryStore();
-
+export function HomeScreen() {
     const { t } = useTranslation();
+    const { restaurants, isLoading, error } = useRestaurantStore();
+    const { deliveryType } = useDeliveryStore();
+    const filteredRestaurants = restaurants.filter((restaurant) =>
+        deliveryType === 'pickup' ? restaurant.pickup : true
+    );
 
-    const fetchRestaurantData = async () => {
-        try {
-            setIsLoading(true);
-            setError(null);
-
-            const response = await axios.get<SearchedRestaurant[]>(
-                `${config.backendUrl}/restaurantAddress/search?address=33-100`,
-            );
-
-            setRestaurants(response.data);
-            setFilteredRestaurants(response.data);
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'An error occurred');
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        if (deliveryType === 'pickup') {
-            const filtered = restaurants.filter(restaurant => restaurant.pickup);
-            setFilteredRestaurants(filtered);
-            setRestaurantsQuantity(filtered.length);
-        } else {
-            setFilteredRestaurants(restaurants);
-            setRestaurantsQuantity(restaurants.length);
-        }
-    }, [deliveryType, restaurants]);
-
-    useEffect(() => {
-        fetchRestaurantData();
-    }, []);
-
+    useAddressEffect();
 
     const renderContent = () => {
         if (isLoading) {
-            return <Text style={styles.loadingText}>{t('loading')}</Text>;
+            return (
+                <View style={styles.loadingContainer}>
+                    <LottieView
+                        source={require('@/assets/animations/Loading.json')}
+                        autoPlay
+                        loop
+                        style={styles.lottie}
+                    />
+                </View>
+            );   ;
         }
 
-        if (error) {
-            return <Text style={styles.loadingText}>{error}</Text>;
+        if (error || restaurants.length === 0) {
+            return (
+                <View style={styles.errorContainer}>
+                    <LottieView
+                        source={require('@/assets/animations/NoRestaurants.json')}
+                        autoPlay
+                        loop
+                        style={styles.lottie}
+                    />
+                    <Text style={styles.error}>{t('errorOrNotFound')}</Text>
+                </View>
+            );
         }
 
         return (
             <>
-                <Text style={styles.orderBY}>{t('order')}{restaurantsQuantity} {t('restaurants')}</Text>
-                <RestaurantList restaurants={filteredRestaurants} />
+                <Text style={styles.orderBY}>{t('order')} {filteredRestaurants.length} {t('restaurants')}</Text>
+                <RestaurantList />
             </>
-        )
+        );
     };
 
     return (
-            <LinearGradient
-                colors={['rgba(255, 165, 0, 0.5)', 'rgba(245, 245, 81, 0.5)', 'rgba(250, 58, 58, 0.5)']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.container}
-            >
-                <View style={styles.filterContainer}>
-                    {renderContent()}
-                </View>
-            </LinearGradient>
+        <LinearGradient
+            colors={['rgba(255, 165, 0, 0.5)', 'rgba(245, 245, 81, 0.5)', 'rgba(250, 58, 58, 0.5)']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.container}
+        >
+            <View style={styles.filterContainer}>
+                {renderContent()}
+            </View>
+        </LinearGradient>
     );
 }
 
@@ -97,32 +75,33 @@ const styles = StyleSheet.create({
         paddingTop: 80,
         paddingHorizontal: 10,
     },
-    filterContainer: {
+    loadingContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
     },
+    filterContainer: {},
     orderBY: {
         color: '#000',
         fontSize: 20,
         fontWeight: 'bold',
         padding: 10,
     },
-    filterPicker: {
-        height: 50,
-        width: '100%',
-    },
     loadingText: {
         color: '#000',
         fontSize: 16,
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
         textAlign: 'center',
     },
+    errorContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     error: {
+        fontSize: 18,
         color: 'red',
         textAlign: 'center',
     },
-    contentContainer: {
-        flex: 1,
-        alignItems: 'center',
+    lottie: {
+        width: 400,
+        height: 400,
     },
 });
