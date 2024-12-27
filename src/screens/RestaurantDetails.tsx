@@ -13,23 +13,18 @@ import CategoryScrollView from "@/src/components/restaurantDetails/CategoryScrol
 import StartRating from "@/src/components/restaurantDetails/StartRating";
 import {useDeliveryStore} from "@/src/zustand/delivery";
 import DeliveryView from "@/src/components/restaurantDetails/DeliveryView";
+import {useRestaurantStore} from "@/src/zustand/restaurantStore";
 
 const RestaurantDetails = () => {
-    const [restaurant, setRestaurant] = useState<Restaurant | null>(null)
     const route = useRoute();
-    const { restaurantId} = route.params;
+    const { restaurantId } = route.params;
     const navigation = useNavigation();
     const opacity = useSharedValue(0);
     const { deliveryType } = useDeliveryStore();
+    const { restaurants } = useRestaurantStore();
 
-    const fetchRestaurantData = async () => {
-        const response = await axios.get<Restaurant>(`${config.backendUrl}/restaurant/getRestaurant?id=${restaurantId}`);
-        if (response) {
-            setRestaurant(response.data);
-        } else {
-            console.error('Error fetching restaurant');
-        }
-    }
+    const restaurant = restaurants.find(r => r.restaurantId === restaurantId);
+
 
     const onScroll = (event: any) => {
         const y = event.nativeEvent.contentOffset.y;
@@ -61,10 +56,6 @@ const RestaurantDetails = () => {
         })
     }, []);
 
-    useEffect(() => {
-        fetchRestaurantData();
-    }, []);
-
     return (
         <ParallaxScrollView backgroundColor={'#ffffff'}
                             style={{flex:1}}
@@ -80,7 +71,7 @@ const RestaurantDetails = () => {
             <View style={styles.detailsContainer}>
                 <View style={styles.info}>
                     <Image source={{uri: restaurant?.logoUrl}} style={styles.logo}/>
-                    {/*<StartRating rating={rating}></StartRating>*/}
+                    <StartRating rating={restaurant?.rating}></StartRating>
                     <View style={styles.info}>
                         <TouchableOpacity style={styles.infoItem}>
                             <FontAwesome name="info" size={24} color={'#1e1e1e'} />
@@ -90,7 +81,7 @@ const RestaurantDetails = () => {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <DeliveryView></DeliveryView>
+                <DeliveryView delivery={restaurant?.delivery}></DeliveryView>
                 <CategoryScrollView />
                 <RestaurantItems restaurantId={restaurantId} />
             </View>

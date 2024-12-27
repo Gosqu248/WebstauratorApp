@@ -4,12 +4,14 @@ import Colors from '@/constants/Colors';
 import { useDeliveryStore } from '@/src/zustand/delivery';
 import { Ionicons } from '@expo/vector-icons';
 import {useTranslation} from "react-i18next";
+import {useRestaurantStore} from "@/src/zustand/restaurantStore";
 import {Delivery} from "@/src/interface/delivery";
 
-const DeliveryView = (deliveryMinTime, deliveryMaxTime, pickupTime) => {
+const DeliveryView = ({ delivery }: { delivery: Delivery }) => {
     const { deliveryType, setDeliveryType } = useDeliveryStore();
     const { t } = useTranslation();
 
+    console.log(delivery.deliveryMaxTime)
     return (
         <View style={styles.view}>
             <TouchableOpacity
@@ -24,25 +26,34 @@ const DeliveryView = (deliveryMinTime, deliveryMaxTime, pickupTime) => {
                     size={24}
                     color={deliveryType === 'delivery' ? Colors.iconOrange : '#000'}
                 />
-                <View>
+                <View style={styles.deliveryTexts}>
                     <Text>{t('delivery')}</Text>
-                    <Text>{deliveryMinTime}</Text>
+                    <Text>{delivery.deliveryMinTime} - {delivery.deliveryMaxTime} min</Text>
                 </View>
             </TouchableOpacity>
 
             <TouchableOpacity
                 style={[
                     styles.deliveryOption,
-                    deliveryType === 'pickup' ? styles.selectedOption : styles.unselectedOption
+                    deliveryType === 'pickup' ? styles.selectedOption : styles.unselectedOption,
+                    delivery.pickupTime === 0 && styles.disabledOption
                 ]}
-                onPress={() => setDeliveryType('pickup')}
+                onPress={() => delivery.pickupTime !== 0 && setDeliveryType('pickup')}
+                disabled={delivery.pickupTime === 0}
             >
                 <Ionicons
                     name="walk-outline"
                     size={24}
                     color={deliveryType === 'pickup' ? Colors.iconOrange : '#000'}
                 />
-                <Text>{t('pickup')}</Text>
+                <View style={styles.deliveryTexts}>
+                    <Text>{t('pickup')}</Text>
+                    {
+                        delivery.pickupTime !== 0
+                            ? <Text>{delivery.pickupTime} min</Text>
+                            : <></>
+                    }
+                </View>
             </TouchableOpacity>
         </View>
     );
@@ -71,6 +82,12 @@ const styles = StyleSheet.create({
     unselectedOption: {
         backgroundColor: 'transparent',
     },
+    disabledOption: {
+        opacity: 0.5,
+    },
+    deliveryTexts: {
+        marginLeft: 10,
+    }
 });
 
 export default DeliveryView;

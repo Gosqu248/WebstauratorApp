@@ -22,7 +22,6 @@ const RestaurantList = () => {
             ? `${item.distance?.toFixed(1)} km`
             : `${(item.distance * 1000).toFixed(0)} m`;
 
-        console.log('item', item)
         const goToRestaurant = () => {
             navigation.navigate('RestaurantDetails', {
                 restaurantId: item.restaurantId,
