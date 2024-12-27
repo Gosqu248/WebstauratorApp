@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import '@/src/language/i18n';
 import RestaurantList from '../components/home/RestaurantList';
 import {SearchedRestaurant} from "@/src/interface/searchedRestaurant";
+import {useDeliveryStore} from "@/src/zustand/delivery";
 
 type HomeScreenProps = {
     navigation: NativeStackNavigationProp<any>;
@@ -20,8 +21,8 @@ export function HomeScreen({ navigation }: HomeScreenProps) {
     const [filteredRestaurants, setFilteredRestaurants] = useState<SearchedRestaurant[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [filter, setFilter] = useState<'all' | 'delivery' | 'pickup'>('all');
     const [restaurantsQuantity, setRestaurantsQuantity] = useState<number>(0);
+    const { deliveryType } = useDeliveryStore();
 
     const { t } = useTranslation();
 
@@ -36,7 +37,6 @@ export function HomeScreen({ navigation }: HomeScreenProps) {
 
             setRestaurants(response.data);
             setFilteredRestaurants(response.data);
-            setRestaurantsQuantity(response.data.length);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An error occurred');
         } finally {
@@ -45,18 +45,20 @@ export function HomeScreen({ navigation }: HomeScreenProps) {
     };
 
     useEffect(() => {
+        if (deliveryType === 'pickup') {
+            const filtered = restaurants.filter(restaurant => restaurant.pickup);
+            setFilteredRestaurants(filtered);
+            setRestaurantsQuantity(filtered.length);
+        } else {
+            setFilteredRestaurants(restaurants);
+            setRestaurantsQuantity(restaurants.length);
+        }
+    }, [deliveryType, restaurants]);
+
+    useEffect(() => {
         fetchRestaurantData();
     }, []);
 
-    useEffect(() => {
-        if (filter === 'delivery') {
-            setFilteredRestaurants(restaurants.filter((restaurant) => !restaurant.pickup));
-        } else if (filter === 'pickup') {
-            setFilteredRestaurants(restaurants.filter((restaurant) => restaurant.pickup));
-        } else {
-            setFilteredRestaurants(restaurants);
-        }
-    }, [filter, restaurants]);
 
     const renderContent = () => {
         if (isLoading) {

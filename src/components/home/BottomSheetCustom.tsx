@@ -1,25 +1,24 @@
-import React, {forwardRef, useCallback, useMemo} from 'react';
-import {Text, StyleSheet, View, TouchableOpacity} from 'react-native';
-import {BottomSheetBackdrop, BottomSheetModal, BottomSheetView, useBottomSheetModal} from '@gorhom/bottom-sheet';
-import {Link} from "expo-router";
-import {Ionicons} from "@expo/vector-icons";
+import React, { forwardRef, useCallback, useMemo } from 'react';
+import { Text, StyleSheet, View, TouchableOpacity } from 'react-native';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import {useTranslation} from "react-i18next";
-import {useNavigation} from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
+import { useNavigation } from "@react-navigation/native";
+import { useDeliveryStore } from "@/src/zustand/delivery";
 
 export type Ref = BottomSheetModal;
 
 const BottomSheetCustom = forwardRef<Ref>((props, ref) => {
-    const snapPoints = useMemo(() => ['25','50%'], []);
+    const snapPoints = useMemo(() => ['25', '50%'], []);
     const renderBackdrop = useCallback((props: any) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />, []);
-    const { dismiss } = useBottomSheetModal();
     const { t } = useTranslation();
     const navigation = useNavigation();
+    const { deliveryType, setDeliveryType } = useDeliveryStore();
 
     const goToLocationSearch = () => {
         navigation.navigate('LocationSearch'); // Navigate to the LocationSearch screen
     };
-
 
     return (
         <BottomSheetModal
@@ -31,11 +30,17 @@ const BottomSheetCustom = forwardRef<Ref>((props, ref) => {
             backdropComponent={renderBackdrop}>
             <BottomSheetView style={styles.contentContainer}>
                 <View style={styles.toggle}>
-                    <TouchableOpacity style={styles.toggleActive}>
-                        <Text style={styles.activeText}>{t('delivery')}</Text>
+                    <TouchableOpacity
+                        style={deliveryType === 'delivery' ? styles.toggleActive : styles.toggleInactive}
+                        onPress={() => setDeliveryType('delivery')}
+                    >
+                        <Text style={deliveryType === 'delivery' ? styles.activeText : styles.inactiveText}>{t('delivery')}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.toggleInactive}>
-                        <Text style={styles.inactiveText}>{t('pickup')}</Text>
+                    <TouchableOpacity
+                        style={deliveryType === 'pickup' ? styles.toggleActive : styles.toggleInactive}
+                        onPress={() => setDeliveryType('pickup')}
+                    >
+                        <Text style={deliveryType === 'pickup' ? styles.activeText : styles.inactiveText}>{t('pickup')}</Text>
                     </TouchableOpacity>
                 </View>
 
