@@ -42,7 +42,6 @@ const Info = ({ restaurant }: { restaurant: Restaurant }) => {
   const getPaymentMethods = async () => {
     const fetchedPaymentMethods = await fetchRestaurantPaymentMethods(restaurant.restaurantId);
     setPaymentMethods(fetchedPaymentMethods);
-    console.log(fetchedPaymentMethods);
   };
 
   useEffect(() => {
@@ -95,11 +94,10 @@ const Info = ({ restaurant }: { restaurant: Restaurant }) => {
         <Ionicons name="information-circle-outline" size={20} color="#000" />
         <Text style={styles.headerText}> {t('info')}</Text>
       </View>
-        <View style={styles.description}>
+        <View style={styles.description2}>
             <Text style={styles.infoText}> {restaurant.name}</Text>
             <Text style={styles.infoText}> {address?.street} {address?.flatNumber}</Text>
             <Text style={styles.infoText}> {address?.zipCode} {address?.city}</Text>
-
         </View>
     </ScrollView>
   );
@@ -119,7 +117,7 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     paddingBottom: 10,
     paddingHorizontal: 10,
-    width: '100%',
+    width: '90%',
   },
   headerText: {
     fontSize: 20,
@@ -132,6 +130,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
       alignSelf: 'center',
   },
+    description2: {
+        width: '90%',
+        justifyContent: 'space-between',
+        backgroundColor: Colors.lightGrey,
+        borderRadius: 10,
+        alignSelf: 'center',
+        marginBottom: 10,
+    },
   descriptionContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',

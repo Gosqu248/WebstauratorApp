@@ -5,6 +5,7 @@ import Colors from "@/constants/Colors";
 import Info from "@/src/components/restaurantDetails/Info";
 import {useTranslation} from "react-i18next";
 import {Restaurant} from "@/src/interface/restaurant";
+import Opinions from "@/src/components/restaurantDetails/Opinions";
 
 const ModalInfo = ({ isVisible, onClose, restaurant }: { isVisible: boolean; onClose: () => void, restaurant: Restaurant }) => {
     const [selectedSection, setSelectedSection] = useState<'opinion' | 'info'>('info');
@@ -42,7 +43,7 @@ const ModalInfo = ({ isVisible, onClose, restaurant }: { isVisible: boolean; onC
 
                     </View>
                     {selectedSection === 'opinion' ? (
-                        <Text style={styles.infoText}>This is the Opinie section content!</Text>
+                        <Opinions restaurant={restaurant}></Opinions>
                     ) : (
                         <Info restaurant={restaurant as Restaurant}/>
                     )}
@@ -64,7 +65,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffffff',
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
-        padding: 20,
         alignItems: 'center',
         justifyContent: 'flex-start', // Align content at the top
     },
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
         flexDirection: 'row',
         marginBottom: 20,
-        marginTop: 35,
+        marginTop: 40,
     },
     sectionButton: {
         flex: 1,

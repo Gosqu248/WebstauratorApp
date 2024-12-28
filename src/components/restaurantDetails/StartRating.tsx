@@ -21,8 +21,7 @@ const StarRating = ({ rating, size = 20, showRating = false }) => {
                     <FontAwesome key={`empty-${index}`} name="star-o" size={size} color={Colors.iconOrange} style={styles.star} />
                 ))}
             </View>
-            {showRating && <Text style={[styles.ratingText, { fontSize: size * 0.6 }]}>{validRating.toFixed(1)}</Text>}
-            <Text>({rating})</Text>
+            {showRating && <Text style={[styles.ratingText, { fontSize: size * 0.6 }]}>({validRating.toFixed(1)})</Text>}
         </View>
     );
 };

@@ -74,7 +74,7 @@ const RestaurantDetails = () => {
             <View style={styles.detailsContainer}>
                 <View style={styles.info}>
                     <Image source={{uri: restaurant?.logoUrl}} style={styles.logo}/>
-                    <StartRating rating={restaurant?.rating}></StartRating>
+                    <StartRating rating={restaurant?.rating} showRating={true}></StartRating>
                     <View style={styles.info}>
                         <TouchableOpacity style={styles.infoItem} onPress={toggleInfoModal}>
                             <FontAwesome name="info" size={24} color={'#1e1e1e'} />
