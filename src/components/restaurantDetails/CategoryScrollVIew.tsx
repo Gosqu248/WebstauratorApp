@@ -88,7 +88,8 @@ const styles = StyleSheet.create({
     },
     segmentText: {
         color: Colors.primary,
-        fontSize: 14,
+        fontWeight: 'bold',
+        fontSize: 16,
     },
     segmentButtonActive: {
         backgroundColor: Colors.primary,

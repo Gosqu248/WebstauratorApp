@@ -4,14 +4,12 @@ import Colors from '@/constants/Colors';
 import { useDeliveryStore } from '@/src/zustand/delivery';
 import { Ionicons } from '@expo/vector-icons';
 import {useTranslation} from "react-i18next";
-import {useRestaurantStore} from "@/src/zustand/restaurantStore";
 import {Delivery} from "@/src/interface/delivery";
 
 const DeliveryView = ({ delivery }: { delivery: Delivery }) => {
     const { deliveryType, setDeliveryType } = useDeliveryStore();
     const { t } = useTranslation();
 
-    console.log(delivery.deliveryMaxTime)
     return (
         <View style={styles.view}>
             <TouchableOpacity
@@ -27,7 +25,7 @@ const DeliveryView = ({ delivery }: { delivery: Delivery }) => {
                     color={deliveryType === 'delivery' ? Colors.iconOrange : '#000'}
                 />
                 <View style={styles.deliveryTexts}>
-                    <Text>{t('delivery')}</Text>
+                    <Text style={styles.optionText}>{t('delivery')}</Text>
                     <Text>{delivery.deliveryMinTime} - {delivery.deliveryMaxTime} min</Text>
                 </View>
             </TouchableOpacity>
@@ -47,7 +45,7 @@ const DeliveryView = ({ delivery }: { delivery: Delivery }) => {
                     color={deliveryType === 'pickup' ? Colors.iconOrange : '#000'}
                 />
                 <View style={styles.deliveryTexts}>
-                    <Text>{t('pickup')}</Text>
+                    <Text style={styles.optionText}>{t('pickup')}</Text>
                     {
                         delivery.pickupTime !== 0
                             ? <Text>{delivery.pickupTime} min</Text>
@@ -67,6 +65,7 @@ const styles = StyleSheet.create({
         padding: 4,
         backgroundColor: Colors.lightGrey,
         alignSelf: 'center',
+        borderRadius: 10,
     },
     deliveryOption: {
         flex: 1,
@@ -75,6 +74,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 30,
         margin: 1,
+        borderRadius: 10,
+
     },
     selectedOption: {
         backgroundColor: '#fff',
@@ -87,6 +88,10 @@ const styles = StyleSheet.create({
     },
     deliveryTexts: {
         marginLeft: 10,
+    },
+    optionText: {
+        fontWeight: 'bold',
+        fontSize: 16,
     }
 });
 

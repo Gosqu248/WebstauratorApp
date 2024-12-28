@@ -22,6 +22,7 @@ const StarRating = ({ rating, size = 20, showRating = false }) => {
                 ))}
             </View>
             {showRating && <Text style={[styles.ratingText, { fontSize: size * 0.6 }]}>{validRating.toFixed(1)}</Text>}
+            <Text>({rating})</Text>
         </View>
     );
 };
@@ -34,9 +35,10 @@ const styles = StyleSheet.create({
     starContainer: {
         flexDirection: 'row',
         alignItems: 'center',
+        marginHorizontal: 8,
     },
     star: {
-        marginHorizontal: 2, // Adds spacing between stars
+        marginHorizontal: 2,
     },
     ratingText: {
         marginLeft: 8,

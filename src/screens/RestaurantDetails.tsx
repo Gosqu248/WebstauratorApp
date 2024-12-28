@@ -14,6 +14,7 @@ import StartRating from "@/src/components/restaurantDetails/StartRating";
 import {useDeliveryStore} from "@/src/zustand/delivery";
 import DeliveryView from "@/src/components/restaurantDetails/DeliveryView";
 import {useRestaurantStore} from "@/src/zustand/restaurantStore";
+import {Delivery} from "@/src/interface/delivery";
 
 const RestaurantDetails = () => {
     const route = useRoute();
@@ -81,7 +82,7 @@ const RestaurantDetails = () => {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <DeliveryView delivery={restaurant?.delivery}></DeliveryView>
+                <DeliveryView delivery={restaurant?.delivery as Delivery}></DeliveryView>
                 <CategoryScrollView />
                 <RestaurantItems restaurantId={restaurantId} />
             </View>

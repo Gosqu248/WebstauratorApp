@@ -7,7 +7,7 @@ import { RestaurantInfo} from '@/src/interface/restaurant';
 
 export const fetchSearchedRestaurants = async (address: string) => {
     const response = await axios.get<SearchedRestaurant[]>(
-        `${config.backendUrl}/restaurantAddress/search?address=${address}`
+        `${config.backendUrl}/restaurantAddress/search?address=33-100`
     );
     return response.data;
 };
