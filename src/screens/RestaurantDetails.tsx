@@ -1,32 +1,30 @@
-import {View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Modal} from 'react-native'
-import React, {useEffect, useLayoutEffect, useRef, useState} from 'react'
+import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native'
+import React, { useLayoutEffect, useState} from 'react'
 import ParallaxScrollView from "@/src/components/restaurantDetails/ParallaxScrollView";
 import Colors from "@/constants/Colors";
 import {useNavigation, useRoute} from "@react-navigation/native";
 import {FontAwesome, Ionicons} from "@expo/vector-icons";
-import RestaurantItems from "@/src/components/restaurantDetails/RestaurantItems";
 import { useSharedValue, withTiming } from 'react-native-reanimated';
 import CategoryScrollView from "@/src/components/restaurantDetails/CategoryScrollVIew";
 import StartRating from "@/src/components/restaurantDetails/StartRating";
-import {useDeliveryStore} from "@/src/zustand/delivery";
 import DeliveryView from "@/src/components/restaurantDetails/DeliveryView";
 import {useRestaurantStore} from "@/src/zustand/restaurantStore";
 import {Delivery} from "@/src/interface/delivery";
-import Info from "@/src/components/restaurantDetails/Info";
+import ModalInfo from "@/src/components/restaurantDetails/ModalInfo";
+import {Restaurant} from "@/src/interface/restaurant";
 
 const RestaurantDetails = () => {
     const route = useRoute();
     const { restaurantId } = route.params;
     const navigation = useNavigation();
     const opacity = useSharedValue(0);
-    const { deliveryType } = useDeliveryStore();
     const { restaurants } = useRestaurantStore();
     const [isInfoVisible, setInfoVisible] = useState(false);
 
     const restaurant = restaurants.find(r => r.restaurantId === restaurantId);
 
     const toggleInfoModal = () => {
-        setInfoVisible(!isInfoVisible); // Toggle modal visibility
+        setInfoVisible(!isInfoVisible);
     };
 
 
@@ -91,7 +89,7 @@ const RestaurantDetails = () => {
 
             </View>
         </ParallaxScrollView>
-            <Info isVisible={isInfoVisible} onClose={toggleInfoModal} />
+            <ModalInfo isVisible={isInfoVisible} onClose={toggleInfoModal} restaurant={restaurant as Restaurant} />
 
         </>
     )

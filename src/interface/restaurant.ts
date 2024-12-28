@@ -11,6 +11,8 @@ export interface Restaurant {
     rating?: number;
     deliveryPrice?: number;
     delivery?: Delivery;
+    latitude: number;
+    longitude: number;
 }
 
 export interface RestaurantInfo {

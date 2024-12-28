@@ -7,6 +7,7 @@ import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import RestaurantItems from "@/src/components/restaurantDetails/RestaurantItems";
 import {useTranslation} from "react-i18next";
+import {fetchCategories} from "@/src/services/categoryService";
 
 const CategoryScrollView = () => {
     const [categories, setCategories] = useState([]);
@@ -21,14 +22,7 @@ const CategoryScrollView = () => {
     const scrollRef = useRef<ScrollView>(null);
     const itemsRef = useRef<TouchableOpacity[]>([]);
 
-    const fetchCategories = async () => {
-        try {
-            const response = await axios.get(`${config.backendUrl}/menu/menuCategories?restaurantId=${restaurantId}`);
-            setCategories(response.data || []);
-        } catch (error) {
-            console.error('Error fetching categories:', error);
-        }
-    };
+
 
     const selectCategory = (index: number) => {
         if (activeIndex === index) {
@@ -44,8 +38,12 @@ const CategoryScrollView = () => {
     };
 
     useEffect(() => {
-        fetchCategories();
-    }, []);
+        const fetchData = async () => {
+            const categoriesData = await fetchCategories(restaurantId);
+            setCategories(categoriesData);
+        };
+        fetchData();
+    }, [restaurantId]);
 
     const clearSearch = () => {
         setSearchQuery('');

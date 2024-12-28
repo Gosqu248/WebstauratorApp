@@ -24,7 +24,7 @@ export const useRestaurantStore = create<RestaurantState>((set) => ({
                     const restaurantData = await fetchRestaurantData(restaurant.restaurantId);
                     const delivery = await fetchDelivery(restaurant.restaurantId);
 
-                    // Transformacja danych
+
                     return {
                         restaurantId: restaurant.restaurantId,
                         name:  restaurant.name,
@@ -36,6 +36,8 @@ export const useRestaurantStore = create<RestaurantState>((set) => ({
                         rating: restaurant.rating || 0,
                         deliveryPrice: restaurant.deliveryPrice || undefined,
                         delivery: delivery || undefined,
+                        latitude: restaurant.lat ,
+                        longitude: restaurant.lon,
                     };
                 })
             );

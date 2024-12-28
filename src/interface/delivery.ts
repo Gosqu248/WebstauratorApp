@@ -6,3 +6,9 @@ export interface Delivery {
     minimumPrice: number;
     pickupTime: number;
 }
+export interface DeliveryHour {
+    id?: number;
+    dayOfWeek: number;
+    openTime: string;
+    closeTime: string;
+}

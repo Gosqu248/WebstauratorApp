@@ -1,9 +1,8 @@
 import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import axios from "axios";
-import config from "@/src/config";
 import { Menu } from "@/src/interface/menu";
 import { useRoute } from "@react-navigation/native";
+import {fetchMenu} from "@/src/services/menuService";
 
 const RestaurantItems = ({selectedCategory, searchQuery}) => {
     const [menu, setMenu] = useState<(Menu | { isHeader: true; title: string })[]>([]);
@@ -15,30 +14,15 @@ const RestaurantItems = ({selectedCategory, searchQuery}) => {
         : searchQuery.length > 0
             ? menu.filter(item => item.name && item.name.toLowerCase().includes(searchQuery.toLowerCase()))
             : menu;
-    const fetchMenu = async () => {
-        try {
-            const response = await axios.get<Menu[]>(`${config.backendUrl}/menu/getRestaurantMenu?restaurantId=${restaurantId}`);
-            if (response?.data) {
-                const flattenedMenu = response.data.reduce((acc, item) => {
-                    const categoryHeaderIndex = acc.findIndex(el => el.isHeader && el.title === item.category);
-                    if (categoryHeaderIndex === -1) {
-                        acc.push({ isHeader: true, title: item.category });
-                    }
-                    acc.push(item);
-                    return acc;
-                }, [] as (Menu | { isHeader: true; title: string })[]);
-                setMenu(flattenedMenu);
-            } else {
-                console.error('No menu data received');
-            }
-        } catch (error) {
-            console.error('Error fetching menu', error);
-        }
-    };
+
 
     useEffect(() => {
-        fetchMenu();
-    }, []);
+        const fetchData = async () => {
+            const menuData = await fetchMenu(restaurantId);
+            setMenu(menuData);
+        };
+        fetchData();
+    }, [restaurantId]);
 
     return (
         <ScrollView contentContainerStyle={styles.menuList}>
