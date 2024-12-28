@@ -5,11 +5,16 @@ import config from "@/src/config";
 import { Menu } from "@/src/interface/menu";
 import { useRoute } from "@react-navigation/native";
 
-const RestaurantItems = () => {
+const RestaurantItems = ({selectedCategory, searchQuery}) => {
     const [menu, setMenu] = useState<(Menu | { isHeader: true; title: string })[]>([]);
     const route = useRoute();
     const { restaurantId } = route.params;
 
+    const filteredMenu = selectedCategory
+        ? menu.filter(item => ('isHeader' in item && item.title === selectedCategory) || item.category === selectedCategory)
+        : searchQuery.length > 0
+            ? menu.filter(item => item.name && item.name.toLowerCase().includes(searchQuery.toLowerCase()))
+            : menu;
     const fetchMenu = async () => {
         try {
             const response = await axios.get<Menu[]>(`${config.backendUrl}/menu/getRestaurantMenu?restaurantId=${restaurantId}`);
@@ -37,7 +42,7 @@ const RestaurantItems = () => {
 
     return (
         <ScrollView contentContainerStyle={styles.menuList}>
-            {menu.map((item, index) => {
+            {filteredMenu.map((item, index) => {
                 if ('isHeader' in item) {
                     return <Text key={`header-${item.title}`} style={styles.categoryTitle}>{item.title}</Text>;
                 }
@@ -61,7 +66,7 @@ const RestaurantItems = () => {
 
 const styles = StyleSheet.create({
     menuList: {
-        paddingBottom: 16,
+        paddingVertical: 10,
         paddingHorizontal: 16,
     },
     categoryTitle: {

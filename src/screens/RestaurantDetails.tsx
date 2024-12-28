@@ -1,20 +1,18 @@
-import {View, Text, StyleSheet, Image, TouchableOpacity, ScrollView} from 'react-native'
+import {View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Modal} from 'react-native'
 import React, {useEffect, useLayoutEffect, useRef, useState} from 'react'
 import ParallaxScrollView from "@/src/components/restaurantDetails/ParallaxScrollView";
 import Colors from "@/constants/Colors";
 import {useNavigation, useRoute} from "@react-navigation/native";
-import axios from "axios";
-import config from "@/src/config";
-import {Restaurant} from "@/src/interface/restaurant";
 import {FontAwesome, Ionicons} from "@expo/vector-icons";
 import RestaurantItems from "@/src/components/restaurantDetails/RestaurantItems";
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import { useSharedValue, withTiming } from 'react-native-reanimated';
 import CategoryScrollView from "@/src/components/restaurantDetails/CategoryScrollVIew";
 import StartRating from "@/src/components/restaurantDetails/StartRating";
 import {useDeliveryStore} from "@/src/zustand/delivery";
 import DeliveryView from "@/src/components/restaurantDetails/DeliveryView";
 import {useRestaurantStore} from "@/src/zustand/restaurantStore";
 import {Delivery} from "@/src/interface/delivery";
+import Info from "@/src/components/restaurantDetails/Info";
 
 const RestaurantDetails = () => {
     const route = useRoute();
@@ -23,8 +21,13 @@ const RestaurantDetails = () => {
     const opacity = useSharedValue(0);
     const { deliveryType } = useDeliveryStore();
     const { restaurants } = useRestaurantStore();
+    const [isInfoVisible, setInfoVisible] = useState(false);
 
     const restaurant = restaurants.find(r => r.restaurantId === restaurantId);
+
+    const toggleInfoModal = () => {
+        setInfoVisible(!isInfoVisible); // Toggle modal visibility
+    };
 
 
     const onScroll = (event: any) => {
@@ -58,6 +61,7 @@ const RestaurantDetails = () => {
     }, []);
 
     return (
+        <>
         <ParallaxScrollView backgroundColor={'#ffffff'}
                             style={{flex:1}}
                             scrollEvent={onScroll}
@@ -74,7 +78,7 @@ const RestaurantDetails = () => {
                     <Image source={{uri: restaurant?.logoUrl}} style={styles.logo}/>
                     <StartRating rating={restaurant?.rating}></StartRating>
                     <View style={styles.info}>
-                        <TouchableOpacity style={styles.infoItem}>
+                        <TouchableOpacity style={styles.infoItem} onPress={toggleInfoModal}>
                             <FontAwesome name="info" size={24} color={'#1e1e1e'} />
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.infoItem}>
@@ -84,9 +88,12 @@ const RestaurantDetails = () => {
                 </View>
                 <DeliveryView delivery={restaurant?.delivery as Delivery}></DeliveryView>
                 <CategoryScrollView />
-                <RestaurantItems restaurantId={restaurantId} />
+
             </View>
         </ParallaxScrollView>
+            <Info isVisible={isInfoVisible} onClose={toggleInfoModal} />
+
+        </>
     )
 }
 
@@ -222,6 +229,24 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 20,
         paddingBottom: 4,
+    },
+    modalContainer: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContent: {
+        width: '90%',
+        backgroundColor: '#ffffff',
+        borderRadius: 10,
+        padding: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    closeButton: {
+        alignSelf: 'flex-end',
+        marginBottom: 10,
     },
 });
 export default RestaurantDetails
