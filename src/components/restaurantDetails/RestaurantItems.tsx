@@ -1,13 +1,16 @@
-import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
+import {View, Text, Image, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Menu } from "@/src/interface/menu";
 import { useRoute } from "@react-navigation/native";
 import {fetchMenu} from "@/src/services/menuService";
+import AddToBasket from "@/src/components/restaurantDetails/AddToBasket";
 
 const RestaurantItems = ({selectedCategory, searchQuery}) => {
     const [menu, setMenu] = useState<(Menu | { isHeader: true; title: string })[]>([]);
     const route = useRoute();
     const { restaurantId } = route.params;
+    const [isAddModal, setAddModal] = useState(false);
+    const [selectedMenuItem, setSelectedMenuItem] = useState<Menu | null>(null);
 
     const filteredMenu = selectedCategory
         ? menu.filter(item => ('isHeader' in item && item.title === selectedCategory) || item.category === selectedCategory)
@@ -15,6 +18,10 @@ const RestaurantItems = ({selectedCategory, searchQuery}) => {
             ? menu.filter(item => item.name && item.name.toLowerCase().includes(searchQuery.toLowerCase()))
             : menu;
 
+    const toggleAddModal = (item?: Menu) => {
+        setSelectedMenuItem(item || null);
+        setAddModal(!isAddModal);
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -32,7 +39,7 @@ const RestaurantItems = ({selectedCategory, searchQuery}) => {
                 }
 
                 return (
-                    <View key={`${item.id}-${index}`} style={styles.menuItem}>
+                    <TouchableOpacity key={`${item.id}-${index}`} style={styles.menuItem} onPress={() => toggleAddModal(item as Menu)}>
                         <View style={styles.menuDetails}>
                             <Text style={styles.menuName}>{item.name}</Text>
                             <Text style={styles.menuIngredients}>{item.ingredients}</Text>
@@ -41,9 +48,12 @@ const RestaurantItems = ({selectedCategory, searchQuery}) => {
                         {item.image && (
                             <Image source={{ uri: item.image }} style={styles.menuImage} />
                         )}
-                    </View>
+                    </TouchableOpacity>
                 );
             })}
+            {selectedMenuItem && (
+                <AddToBasket menu={selectedMenuItem} visible={isAddModal} onClose={toggleAddModal}/>
+            )}
         </ScrollView>
     );
 };

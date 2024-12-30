@@ -12,6 +12,8 @@ import {useRestaurantStore} from "@/src/zustand/restaurantStore";
 import {Delivery} from "@/src/interface/delivery";
 import ModalInfo from "@/src/components/restaurantDetails/ModalInfo";
 import {Restaurant} from "@/src/interface/restaurant";
+import {useTranslation} from "react-i18next";
+import {useCartStore} from "@/src/zustand/cartStore";
 
 const RestaurantDetails = () => {
     const route = useRoute();
@@ -20,6 +22,9 @@ const RestaurantDetails = () => {
     const opacity = useSharedValue(0);
     const { restaurants } = useRestaurantStore();
     const [isInfoVisible, setInfoVisible] = useState(false);
+    const {t} = useTranslation();
+    const basket = useCartStore((state) => state.basket);
+    const totalPrice = useCartStore((state) => state.totalPrice);
 
     const restaurant = restaurants.find(r => r.restaurantId === restaurantId);
 
@@ -59,45 +64,53 @@ const RestaurantDetails = () => {
     }, []);
 
     return (
-        <>
-        <ParallaxScrollView backgroundColor={'#ffffff'}
-                            style={{flex:1}}
-                            scrollEvent={onScroll}
-                            parallaxHeaderHeight={250}
-                            renderBackground={() => <Image source={{uri: restaurant?.imageUrl}} style={{width: '100%', height: '100%'}}/>}
-                            stickyHeaderHeight={100}
-                            contentBackgroundColor={Colors.lightGrey}
-                            renderStickyHeader={() => <View key="sticky-header" style={styles.stickySection}>
-                                <Text style={styles.stickySectionText}>{restaurant?.name}</Text>
-                            </View>}
-        >
-            <View style={styles.detailsContainer}>
-                <View style={styles.info}>
-                    <Image source={{uri: restaurant?.logoUrl}} style={styles.logo}/>
-                    <StartRating rating={restaurant?.rating} showRating={true}></StartRating>
+        <View style={{ flex: 1 }}>
+            <ParallaxScrollView backgroundColor={'#ffffff'}
+                                style={{flex:1}}
+                                scrollEvent={onScroll}
+                                parallaxHeaderHeight={250}
+                                renderBackground={() => <Image source={{uri: restaurant?.imageUrl}} style={{width: '100%', height: '100%'}}/>}
+                                stickyHeaderHeight={100}
+                                contentBackgroundColor={Colors.lightGrey}
+                                renderStickyHeader={() => <View key="sticky-header" style={styles.stickySection}>
+                                    <Text style={styles.stickySectionText}>{restaurant?.name}</Text>
+                                </View>}
+            >
+                <View style={styles.detailsContainer}>
                     <View style={styles.info}>
-                        <TouchableOpacity style={styles.infoItem} onPress={toggleInfoModal}>
-                            <FontAwesome name="info" size={24} color={'#1e1e1e'} />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.infoItem}>
-                            <FontAwesome name="heart-o" size={24} color={'#1e1e1e'} />
-                        </TouchableOpacity>
+                        <Image source={{uri: restaurant?.logoUrl}} style={styles.logo}/>
+                        <StartRating rating={restaurant?.rating} showRating={true}></StartRating>
+                        <View style={styles.info}>
+                            <TouchableOpacity style={styles.infoItem} onPress={toggleInfoModal}>
+                                <FontAwesome name="info" size={24} color={'#1e1e1e'} />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.infoItem}>
+                                <FontAwesome name="heart-o" size={24} color={'#1e1e1e'} />
+                            </TouchableOpacity>
+                        </View>
                     </View>
+                    <DeliveryView delivery={restaurant?.delivery as Delivery}></DeliveryView>
+                    <CategoryScrollView />
                 </View>
-                <DeliveryView delivery={restaurant?.delivery as Delivery}></DeliveryView>
-                <CategoryScrollView />
-
-            </View>
-        </ParallaxScrollView>
+            </ParallaxScrollView>
+            { basket.length > 0 && (
+                <TouchableOpacity style={styles.basketButton}>
+                    <Ionicons name="cart-outline" size={27} color={'white'} />
+                    <View style={styles.basketText}>
+                        <Text style={styles.goToBasket}>{t('goToBasket')} | </Text>
+                        <Text style={styles.goToBasket}> {totalPrice.toFixed(2)} zł</Text>
+                    </View>
+                </TouchableOpacity>
+            )}
             <ModalInfo isVisible={isInfoVisible} onClose={toggleInfoModal} restaurant={restaurant as Restaurant} />
-
-        </>
-    )
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
     detailsContainer: {
         backgroundColor: '#ffffff',
+
     },
     info: {
         flexDirection: 'row',
@@ -245,6 +258,30 @@ const styles = StyleSheet.create({
     closeButton: {
         alignSelf: 'flex-end',
         marginBottom: 10,
+    },
+    basketButton: {
+        position: 'absolute',
+        bottom: 10,
+        width: '90%',
+        maxHeight: 50,
+        flexDirection: 'row',
+        backgroundColor: Colors.primary,
+        borderRadius: 5,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        marginHorizontal: '5%',
+    },
+    basketText: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flex: 1,
+        width: '100%',
+    },
+    goToBasket: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
 });
 export default RestaurantDetails

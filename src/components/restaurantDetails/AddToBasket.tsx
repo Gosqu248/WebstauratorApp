@@ -1,0 +1,232 @@
+import React, { useState, useEffect } from 'react';
+import {View, Text, TouchableOpacity, StyleSheet, ScrollView, Modal, Alert} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import Colors from '@/constants/Colors';
+import { useCartStore } from '@/src/zustand/cartStore';
+import {useTranslation} from "react-i18next";
+
+const AddToBasket = ({ menu, visible, onClose }) => {
+  const [quantity, setQuantity] = useState(1);
+  const { t } = useTranslation();
+  const [groupedAdditives, setGroupedAdditives] = useState({});
+  const [selectedAdditives, setSelectedAdditives] = useState([]);
+  const addToBasket = useCartStore((state) => state.addToBasket);
+  const [price, setPrice] = useState(0);
+
+  useEffect(() => {
+    if (menu.additives) {
+      setGroupedAdditives(groupAdditivesByName(menu.additives));
+    }
+    calculatePrice();
+  }, [menu, selectedAdditives, quantity]);
+
+  const groupAdditivesByName = (additives) => {
+    return additives.reduce((acc, additive) => {
+      if (!acc[additive.name]) {
+        acc[additive.name] = [];
+      }
+      acc[additive.name].push(additive);
+      return acc;
+    }, {});
+  };
+
+  const calculatePrice = () => {
+    const additivesPrice = selectedAdditives.reduce((total, additive) => total + additive.price, 0);
+    const totalPrice = (menu.price + additivesPrice) * quantity;
+    setPrice(totalPrice);
+  };
+
+  const selectAdditive = (additive) => {
+    const group = groupedAdditives[additive.name];
+    setSelectedAdditives((prev) => prev.filter((a) => !group.includes(a)).concat(additive));
+  };
+
+  const isSelected = (additive) => {
+    return selectedAdditives.some((a) => a.id === additive.id);
+  };
+
+  const allAdditiveGroupsSelected = () => {
+    return Object.keys(groupedAdditives).every(group =>
+      selectedAdditives.some(additive => groupedAdditives[group].includes(additive))
+    );
+  };
+
+  const addQuantity = () => setQuantity(quantity + 1);
+  const removeQuantity = () => setQuantity(quantity > 1 ? quantity - 1 : 1);
+
+  const handleAddToBasket = () => {
+    if (menu.additives && !allAdditiveGroupsSelected()) {
+      Alert.alert(t('error'), t('errorOfAdditives'));
+      return;
+    }
+    addToBasket({ menu, quantity, chooseAdditives: selectedAdditives });
+    onClose();
+  };
+
+  return (
+    <Modal visible={visible} animationType="slide" transparent={true} onRequestClose={onClose}>
+      <TouchableOpacity style={styles.modalContainer} onPress={onClose} activeOpacity={1}>
+        <View style={styles.modalContent}>
+          <View style={styles.topContainer}>
+            <View style={styles.dragIndicator} />
+            <Text style={styles.nameText}>{menu.name}</Text>
+            <Text>{menu.ingredients}</Text>
+            <Text style={styles.priceText}>{menu.price?.toFixed(2)} zł</Text>
+          </View>
+
+          {menu.additives?.length > 0 && (
+            <View style={styles.additivesView}>
+              <ScrollView>
+                {Object.keys(groupedAdditives).map((additiveName) => (
+                  <View key={additiveName} style={styles.additiveGroup}>
+                    <Text style={styles.additiveGroupName}>{additiveName}</Text>
+                    {groupedAdditives[additiveName].map((additive) => (
+                      <TouchableOpacity
+                        key={additive.id}
+                        style={[styles.additiveItem, isSelected(additive) && styles.selectedAdditive]}
+                        onPress={() => selectAdditive(additive)}
+                      >
+                        <View style={styles.additiveItemContent}>
+                          <View style={styles.additiveLeftContainer}>
+                            <Text>{additive.value}</Text>
+                            {additive.price > 0 && <Text style={styles.additivePrice}>(+ {additive.price.toFixed(2)} zł)</Text>}
+                          </View>
+                          <View style={styles.additiveRightContent}>
+                            {isSelected(additive) && <Ionicons name="checkmark-circle" size={20} color={Colors.primary} />}
+                          </View>
+                        </View>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                ))}
+              </ScrollView>
+            </View>
+          )}
+
+          <View style={styles.bottomContainer}>
+            <View style={styles.quantityView}>
+              <TouchableOpacity onPress={removeQuantity}>
+                <Ionicons name={'remove'} size={25} color={'#8a8a8a'} />
+              </TouchableOpacity>
+              <Text style={styles.priceText}>{quantity}</Text>
+              <TouchableOpacity onPress={addQuantity}>
+                <Ionicons name={'add'} size={25} color={'#8a8a8a'} />
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity style={styles.button} onPress={handleAddToBasket}>
+              <Text style={styles.buttonText}>{price.toFixed(2)} zł</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </TouchableOpacity>
+    </Modal>
+  );
+};
+
+const styles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    width: '100%',
+    minHeight: '20%',
+    backgroundColor: '#fff',
+    paddingVertical: 20,
+  },
+  topContainer: {
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  dragIndicator: {
+    width: 40,
+    height: 5,
+    backgroundColor: '#ccc',
+    borderRadius: 2.5,
+    marginBottom: 10,
+    alignSelf: 'center',
+  },
+  nameText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  priceText: {
+    fontSize: 18,
+    color: Colors.primary,
+    fontWeight: 'bold',
+  },
+  bottomContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+    paddingHorizontal: 20,
+  },
+  quantityView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: 160,
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderColor: '#dad8d8',
+  },
+  button: {
+    width: 160,
+    backgroundColor: Colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  additivesView: {
+    flexDirection: 'column',
+    width: '100%',
+    backgroundColor: '#f5f5f5',
+    marginBottom: 10,
+    padding: 20,
+    maxHeight: 600,
+  },
+  additiveGroup: {
+    marginBottom: 10,
+  },
+  additiveGroupName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  additiveItem: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    marginBottom: 5,
+  },
+  selectedAdditive: {
+    borderColor: Colors.primary,
+  },
+  additiveItemContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  additiveLeftContainer: {
+    flexDirection: 'row',
+  },
+  additiveRightContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  additivePrice: {
+    marginLeft: 10,
+  },
+});
+
+export default AddToBasket;

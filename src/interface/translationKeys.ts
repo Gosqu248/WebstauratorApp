@@ -174,4 +174,7 @@ export interface TranslationKeys {
     loading: string;
     currentLocation: string;
     errorOrNotFound: string;
+    error: string;
+    errorOfAdditives: string;
+    goToBasket: string;
 }

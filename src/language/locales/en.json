@@ -1,5 +1,7 @@
 {
   "chooseLanguage": "Choose language",
+  "errorOfAdditives": "Select at least one of the choices in each category",
+  "goToBasket": "Go to basket",
   "polish": "Polish",
   "english": "English",
   "home1": "Don't know what to eat today?",
@@ -173,5 +175,6 @@
   "paymentId": "Payment ID",
   "loading": "Loading...",
   "currentLocation": "Current location",
-  "errorOrNotFound": "Restaurant not found or address is invalid"
+  "errorOrNotFound": "Restaurant not found or address is invalid",
+  "error": "Error"
 }

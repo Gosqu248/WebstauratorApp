@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, ScrollView, TouchableOpacity, Text, StyleSheet, TextInput } from 'react-native';
-import axios from "axios";
-import config from "@/src/config";
 import { useRoute } from "@react-navigation/native";
 import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";

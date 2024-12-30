@@ -150,7 +150,6 @@ const styles = StyleSheet.create({
     distance: {
         marginLeft: 5,
         padding: 5,
-
         fontSize: 14,
         color: Colors.mediumDark,
     },

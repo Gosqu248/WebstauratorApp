@@ -1,5 +1,7 @@
 {
   "chooseLanguage": "Wybierz język",
+   "errorOfAdditives": "Wybierz przynajmniej jeden z wyborów w każdej kategorii",
+  "goToBasket": "Przejdź do koszyka",
   "polish": "Polski",
   "english": "Angielski",
   "home1": "Nie wiesz co dziś zjeść?",
@@ -174,4 +176,5 @@
   "loading": "Ładowanie...",
   "currentLocation": "Aktualna lokalizacja",
   "errorOrNotFound": "Nie znaleziono restauracji lub adres jest nieprawidłowy",
+  "error": "Błąd"
 }
