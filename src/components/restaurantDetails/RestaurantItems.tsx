@@ -52,7 +52,7 @@ const RestaurantItems = ({selectedCategory, searchQuery}) => {
                 );
             })}
             {selectedMenuItem && (
-                <AddToBasket menu={selectedMenuItem} visible={isAddModal} onClose={toggleAddModal}/>
+                <AddToBasket restaurantId={restaurantId} menu={selectedMenuItem} visible={isAddModal} onClose={toggleAddModal}/>
             )}
         </ScrollView>
     );

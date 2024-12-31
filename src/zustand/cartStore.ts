@@ -1,21 +1,103 @@
 import { create } from 'zustand';
 import { OrderMenu } from '@/src/interface/orderMenu';
 
-interface CartState {
+interface RestaurantCart {
   basket: OrderMenu[];
-  totalPrice: number;
-  addToBasket: (item: OrderMenu) => void;
+  currentPrice: number;
 }
 
-export const useCartStore = create<CartState>((set) => ({
-  basket: [],
-  totalPrice: 0,
-  addToBasket: (item) => set((state) => {
-    const newBasket = [...state.basket, item];
-    const newTotalPrice = newBasket.reduce((total, currentItem) => {
-      const additivesPrice = currentItem.chooseAdditives.reduce((sum, additive) => sum + additive.price, 0);
-      return total + (currentItem.menu.price * currentItem.quantity) + (additivesPrice * currentItem.quantity);
+interface CartState {
+  carts: Record<number, RestaurantCart>;
+  addToBasket: (restaurantId: number, item: OrderMenu) => void;
+  getRestaurantCart: (restaurantId: number) => RestaurantCart;
+  increaseQuantity: (restaurantId: number, itemId: number | undefined) => void;
+  decreaseQuantity: (restaurantId: number, itemId: number | undefined) => void;
+}
+
+const calculateCurrentPrice = (basket: OrderMenu[]) =>
+    basket.reduce((total, item) => {
+      const additivesPrice = item.chooseAdditives.reduce((sum, additive) =>
+          sum + additive.price, 0);
+      return total + (item.menu.price * item.quantity) + (additivesPrice * item.quantity);
     }, 0);
-    return { basket: newBasket, totalPrice: newTotalPrice };
+
+export const useCartStore = create<CartState>((set, get) => ({
+  carts: {},
+
+  addToBasket: (restaurantId, item) => set((state) => {
+    const restaurantCart = state.carts[restaurantId] || { basket: [], currentPrice: 0 };
+    const existingItemIndex = restaurantCart.basket.findIndex(basketItem => basketItem.menu.id === item.menu.id);
+
+    let newBasket;
+    if (existingItemIndex !== -1) {
+      newBasket = restaurantCart.basket.map((basketItem, index) =>
+          index === existingItemIndex
+              ? { ...basketItem, quantity: basketItem.quantity + 1 }
+              : basketItem
+      );
+    } else {
+      newBasket = [...restaurantCart.basket, { ...item, quantity: 1 }];
+    }
+
+    const newCurrentPrice = calculateCurrentPrice(newBasket);
+
+    return {
+      carts: {
+        ...state.carts,
+        [restaurantId]: {
+          basket: newBasket,
+          currentPrice: newCurrentPrice
+        }
+      }
+    };
   }),
+
+  getRestaurantCart: (restaurantId) => {
+    const state = get();
+    return state.carts[restaurantId] || { basket: [], currentPrice: 0 };
+  },
+
+  increaseQuantity: (restaurantId, itemId) => set((state) => {
+    const restaurantCart = state.carts[restaurantId];
+    if (!restaurantCart) return state;
+
+    const newBasket = restaurantCart.basket.map(item =>
+    item.menu.id = itemId
+        ? { ...item, quantity: item.quantity + 1 }
+        : item
+    );
+
+    const newCurrentPrice = calculateCurrentPrice(newBasket);
+
+    return {
+      carts: {
+        ...state.carts,
+        [restaurantId]: {
+            basket: newBasket,
+            currentPrice: newCurrentPrice
+        }
+      }
+    };
+  }),
+
+  decreaseQuantity: (restaurantId, itemId) => set((state) => {
+    const restaurantCart = state.carts[restaurantId];
+    if (!restaurantCart) return state;
+
+    const newBasket = restaurantCart.basket
+        .map(item => item.menu.id === itemId ? { ...item, quantity: item.quantity - 1 } : item)
+        .filter(item => item.quantity > 0);
+    const newCurrentPrice = calculateCurrentPrice(newBasket);
+
+    return {
+      carts: {
+        ...state.carts,
+        [restaurantId]: {
+          basket: newBasket,
+          currentPrice: newCurrentPrice
+        }
+      }
+    };
+  }),
+
 }));

@@ -12,12 +12,15 @@ import {Ionicons} from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import LocationSearch from "@/src/screens/LocationSearch";
 import RestaurantDetails from "@/src/screens/RestaurantDetails";
+import Basket from "@/src/screens/Basket";
+import {useTranslation} from "react-i18next";
 
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
     const drawerRef = useRef<DrawerLayout>(null);
+    const {t} = useTranslation();
 
     const openDrawer = () => {
         drawerRef.current?.openDrawer();
@@ -55,6 +58,13 @@ export default function App() {
                                 options={{
                                     presentation: 'fullScreenModal',
                                     headerTitle: 'RestaurantDetails',
+                                }}
+                            />
+                            <Stack.Screen
+                                name="Basket"
+                                component={Basket}
+                                options={{
+                                    presentation: 'fullScreenModal',
                                 }}
                             />
                         </Stack.Navigator>

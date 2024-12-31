@@ -177,4 +177,7 @@ export interface TranslationKeys {
     error: string;
     errorOfAdditives: string;
     goToBasket: string;
+    basket: string;
+    goToCheckout: string;
+    addMoreProduct: string;
 }

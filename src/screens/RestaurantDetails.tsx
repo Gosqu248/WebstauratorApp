@@ -1,19 +1,19 @@
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native'
-import React, { useLayoutEffect, useState} from 'react'
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React, { useLayoutEffect, useState } from 'react';
 import ParallaxScrollView from "@/src/components/restaurantDetails/ParallaxScrollView";
 import Colors from "@/constants/Colors";
-import {useNavigation, useRoute} from "@react-navigation/native";
-import {FontAwesome, Ionicons} from "@expo/vector-icons";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useSharedValue, withTiming } from 'react-native-reanimated';
 import CategoryScrollView from "@/src/components/restaurantDetails/CategoryScrollVIew";
 import StartRating from "@/src/components/restaurantDetails/StartRating";
 import DeliveryView from "@/src/components/restaurantDetails/DeliveryView";
-import {useRestaurantStore} from "@/src/zustand/restaurantStore";
-import {Delivery} from "@/src/interface/delivery";
+import { useRestaurantStore } from "@/src/zustand/restaurantStore";
+import { Delivery } from "@/src/interface/delivery";
 import ModalInfo from "@/src/components/restaurantDetails/ModalInfo";
-import {Restaurant} from "@/src/interface/restaurant";
-import {useTranslation} from "react-i18next";
-import {useCartStore} from "@/src/zustand/cartStore";
+import { Restaurant } from "@/src/interface/restaurant";
+import { useTranslation } from "react-i18next";
+import { useCartStore } from "@/src/zustand/cartStore";
 
 const RestaurantDetails = () => {
     const route = useRoute();
@@ -22,16 +22,18 @@ const RestaurantDetails = () => {
     const opacity = useSharedValue(0);
     const { restaurants } = useRestaurantStore();
     const [isInfoVisible, setInfoVisible] = useState(false);
-    const {t} = useTranslation();
-    const basket = useCartStore((state) => state.basket);
-    const totalPrice = useCartStore((state) => state.totalPrice);
+    const { t } = useTranslation();
+    const currentPrice = useCartStore(state => state.getRestaurantCart(restaurantId).currentPrice);
 
     const restaurant = restaurants.find(r => r.restaurantId === restaurantId);
 
-    const toggleInfoModal = () => {
-        setInfoVisible(!isInfoVisible);
+    const goToBasket = () => {
+        navigation.navigate('Basket', { restaurant: restaurant });
     };
 
+    const toggleInfoModal = () => {
+        setInfoVisible(prevState => !prevState);
+    };
 
     const onScroll = (event: any) => {
         const y = event.nativeEvent.contentOffset.y;
@@ -54,32 +56,34 @@ const RestaurantDetails = () => {
             ),
             headerRight: () => (
                 <View style={styles.bar}>
-                    <TouchableOpacity  style={styles.roundButton}>
+                    <TouchableOpacity style={styles.roundButton}>
                         <Ionicons name="share-outline" size={27} color={Colors.iconOrange} />
                     </TouchableOpacity>
-
                 </View>
             ),
-        })
-    }, []);
+        });
+    }, [navigation]);
 
     return (
         <View style={{ flex: 1 }}>
-            <ParallaxScrollView backgroundColor={'#ffffff'}
-                                style={{flex:1}}
-                                scrollEvent={onScroll}
-                                parallaxHeaderHeight={250}
-                                renderBackground={() => <Image source={{uri: restaurant?.imageUrl}} style={{width: '100%', height: '100%'}}/>}
-                                stickyHeaderHeight={100}
-                                contentBackgroundColor={Colors.lightGrey}
-                                renderStickyHeader={() => <View key="sticky-header" style={styles.stickySection}>
-                                    <Text style={styles.stickySectionText}>{restaurant?.name}</Text>
-                                </View>}
+            <ParallaxScrollView
+                backgroundColor={'#ffffff'}
+                style={{ flex: 1 }}
+                scrollEvent={onScroll}
+                parallaxHeaderHeight={250}
+                renderBackground={() => <Image source={{ uri: restaurant?.imageUrl }} style={{ width: '100%', height: '100%' }} />}
+                stickyHeaderHeight={100}
+                contentBackgroundColor={Colors.lightGrey}
+                renderStickyHeader={() => (
+                    <View key="sticky-header" style={styles.stickySection}>
+                        <Text style={styles.stickySectionText}>{restaurant?.name}</Text>
+                    </View>
+                )}
             >
                 <View style={styles.detailsContainer}>
                     <View style={styles.info}>
-                        <Image source={{uri: restaurant?.logoUrl}} style={styles.logo}/>
-                        <StartRating rating={restaurant?.rating} showRating={true}></StartRating>
+                        <Image source={{ uri: restaurant?.logoUrl }} style={styles.logo} />
+                        <StartRating rating={restaurant?.rating} showRating={true} />
                         <View style={styles.info}>
                             <TouchableOpacity style={styles.infoItem} onPress={toggleInfoModal}>
                                 <FontAwesome name="info" size={24} color={'#1e1e1e'} />
@@ -89,28 +93,27 @@ const RestaurantDetails = () => {
                             </TouchableOpacity>
                         </View>
                     </View>
-                    <DeliveryView delivery={restaurant?.delivery as Delivery}></DeliveryView>
+                    <DeliveryView delivery={restaurant?.delivery as Delivery} />
                     <CategoryScrollView />
                 </View>
             </ParallaxScrollView>
-            { basket.length > 0 && (
-                <TouchableOpacity style={styles.basketButton}>
+            {currentPrice > 0 && (
+                <TouchableOpacity style={styles.basketButton} onPress={goToBasket}>
                     <Ionicons name="cart-outline" size={27} color={'white'} />
                     <View style={styles.basketText}>
                         <Text style={styles.goToBasket}>{t('goToBasket')} | </Text>
-                        <Text style={styles.goToBasket}> {totalPrice.toFixed(2)} zł</Text>
+                        <Text style={styles.goToBasket}> {currentPrice.toFixed(2)} zł</Text>
                     </View>
                 </TouchableOpacity>
             )}
             <ModalInfo isVisible={isInfoVisible} onClose={toggleInfoModal} restaurant={restaurant as Restaurant} />
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     detailsContainer: {
         backgroundColor: '#ffffff',
-
     },
     info: {
         flexDirection: 'row',
@@ -119,8 +122,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
     },
     infoItem: {
-        width: 50, // Set fixed width
-        height: 50, // Set fixed height
+        width: 50,
+        height: 50,
         borderWidth: 2,
         borderColor: Colors.grey,
         borderRadius: 2,
@@ -261,13 +264,13 @@ const styles = StyleSheet.create({
     },
     basketButton: {
         position: 'absolute',
-        bottom: 10,
+        bottom: 30,
         width: '90%',
-        maxHeight: 50,
+        maxHeight: 60,
         flexDirection: 'row',
         backgroundColor: Colors.primary,
         borderRadius: 5,
-        paddingVertical: 10,
+        paddingVertical: 15,
         paddingHorizontal: 20,
         marginHorizontal: '5%',
     },
@@ -284,4 +287,5 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 });
-export default RestaurantDetails
+
+export default RestaurantDetails;

@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, ScrollView, Modal, Alert} from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Modal, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '@/constants/Colors';
 import { useCartStore } from '@/src/zustand/cartStore';
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
-const AddToBasket = ({ menu, visible, onClose }) => {
+const AddToBasket = ({ restaurantId, menu, visible, onClose }) => {
   const [quantity, setQuantity] = useState(1);
+  const [price, setPrice] = useState(0);
   const { t } = useTranslation();
   const [groupedAdditives, setGroupedAdditives] = useState({});
   const [selectedAdditives, setSelectedAdditives] = useState([]);
-  const addToBasket = useCartStore((state) => state.addToBasket);
-  const [price, setPrice] = useState(0);
+  const addToBasket = useCartStore(state => state.addToBasket);
 
   useEffect(() => {
     if (menu.additives) {
@@ -47,7 +47,7 @@ const AddToBasket = ({ menu, visible, onClose }) => {
 
   const allAdditiveGroupsSelected = () => {
     return Object.keys(groupedAdditives).every(group =>
-      selectedAdditives.some(additive => groupedAdditives[group].includes(additive))
+        selectedAdditives.some(additive => groupedAdditives[group].includes(additive))
     );
   };
 
@@ -59,67 +59,68 @@ const AddToBasket = ({ menu, visible, onClose }) => {
       Alert.alert(t('error'), t('errorOfAdditives'));
       return;
     }
-    addToBasket({ menu, quantity, chooseAdditives: selectedAdditives });
+
+    addToBasket(restaurantId, { menu, quantity, chooseAdditives: selectedAdditives });
     onClose();
   };
 
   return (
-    <Modal visible={visible} animationType="slide" transparent={true} onRequestClose={onClose}>
-      <TouchableOpacity style={styles.modalContainer} onPress={onClose} activeOpacity={1}>
-        <View style={styles.modalContent}>
-          <View style={styles.topContainer}>
-            <View style={styles.dragIndicator} />
-            <Text style={styles.nameText}>{menu.name}</Text>
-            <Text>{menu.ingredients}</Text>
-            <Text style={styles.priceText}>{menu.price?.toFixed(2)} zł</Text>
-          </View>
+      <Modal visible={visible} animationType="slide" transparent={true} onRequestClose={onClose}>
+        <TouchableOpacity style={styles.modalContainer} onPress={onClose} activeOpacity={1}>
+          <View style={styles.modalContent}>
+            <View style={styles.topContainer}>
+              <View style={styles.dragIndicator} />
+              <Text style={styles.nameText}>{menu.name}</Text>
+              <Text>{menu.ingredients}</Text>
+              <Text style={styles.priceText}>{menu.price?.toFixed(2)} zł</Text>
+            </View>
 
-          {menu.additives?.length > 0 && (
-            <View style={styles.additivesView}>
-              <ScrollView>
-                {Object.keys(groupedAdditives).map((additiveName) => (
-                  <View key={additiveName} style={styles.additiveGroup}>
-                    <Text style={styles.additiveGroupName}>{additiveName}</Text>
-                    {groupedAdditives[additiveName].map((additive) => (
-                      <TouchableOpacity
-                        key={additive.id}
-                        style={[styles.additiveItem, isSelected(additive) && styles.selectedAdditive]}
-                        onPress={() => selectAdditive(additive)}
-                      >
-                        <View style={styles.additiveItemContent}>
-                          <View style={styles.additiveLeftContainer}>
-                            <Text>{additive.value}</Text>
-                            {additive.price > 0 && <Text style={styles.additivePrice}>(+ {additive.price.toFixed(2)} zł)</Text>}
-                          </View>
-                          <View style={styles.additiveRightContent}>
-                            {isSelected(additive) && <Ionicons name="checkmark-circle" size={20} color={Colors.primary} />}
-                          </View>
+            {menu.additives?.length > 0 && (
+                <View style={styles.additivesView}>
+                  <ScrollView>
+                    {Object.keys(groupedAdditives).map((additiveName) => (
+                        <View key={additiveName} style={styles.additiveGroup}>
+                          <Text style={styles.additiveGroupName}>{additiveName}</Text>
+                          {groupedAdditives[additiveName].map((additive) => (
+                              <TouchableOpacity
+                                  key={additive.id}
+                                  style={[styles.additiveItem, isSelected(additive) && styles.selectedAdditive]}
+                                  onPress={() => selectAdditive(additive)}
+                              >
+                                <View style={styles.additiveItemContent}>
+                                  <View style={styles.additiveLeftContainer}>
+                                    <Text>{additive.value}</Text>
+                                    {additive.price > 0 && <Text style={styles.additivePrice}>(+ {additive.price.toFixed(2)} zł)</Text>}
+                                  </View>
+                                  <View style={styles.additiveRightContent}>
+                                    {isSelected(additive) && <Ionicons name="checkmark-circle" size={20} color={Colors.primary} />}
+                                  </View>
+                                </View>
+                              </TouchableOpacity>
+                          ))}
                         </View>
-                      </TouchableOpacity>
                     ))}
-                  </View>
-                ))}
-              </ScrollView>
-            </View>
-          )}
+                  </ScrollView>
+                </View>
+            )}
 
-          <View style={styles.bottomContainer}>
-            <View style={styles.quantityView}>
-              <TouchableOpacity onPress={removeQuantity}>
-                <Ionicons name={'remove'} size={25} color={'#8a8a8a'} />
-              </TouchableOpacity>
-              <Text style={styles.priceText}>{quantity}</Text>
-              <TouchableOpacity onPress={addQuantity}>
-                <Ionicons name={'add'} size={25} color={'#8a8a8a'} />
+            <View style={styles.bottomContainer}>
+              <View style={styles.quantityView}>
+                <TouchableOpacity onPress={removeQuantity} style={{ padding: 5 }}>
+                  <Ionicons name={'remove'} size={25} color={'#8a8a8a'} />
+                </TouchableOpacity>
+                <Text style={styles.quantityText}>{quantity}</Text>
+                <TouchableOpacity onPress={addQuantity} style={{ padding: 5 }}>
+                  <Ionicons name={'add'} size={25} color={'#8a8a8a'} />
+                </TouchableOpacity>
+              </View>
+              <TouchableOpacity style={styles.button} onPress={handleAddToBasket}>
+                <Text style={styles.buttonText}>{price.toFixed(2)} zł</Text>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.button} onPress={handleAddToBasket}>
-              <Text style={styles.buttonText}>{price.toFixed(2)} zł</Text>
-            </TouchableOpacity>
           </View>
-        </View>
-      </TouchableOpacity>
-    </Modal>
+        </TouchableOpacity>
+      </Modal>
   );
 };
 
@@ -134,6 +135,7 @@ const styles = StyleSheet.create({
     minHeight: '20%',
     backgroundColor: '#fff',
     paddingVertical: 20,
+    borderRadius: 10,
   },
   topContainer: {
     paddingHorizontal: 20,
@@ -160,20 +162,23 @@ const styles = StyleSheet.create({
   bottomContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 20,
+    marginTop: 10,
     paddingHorizontal: 20,
+    paddingBottom: 10,
   },
   quantityView: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: 160,
+    width: '45%',
     paddingVertical: 10,
+    paddingHorizontal: 10,
     borderWidth: 1,
     borderColor: '#dad8d8',
+    borderRadius: 5,
   },
   button: {
-    width: 160,
+    width: '45%',
     backgroundColor: Colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
@@ -219,6 +224,7 @@ const styles = StyleSheet.create({
   },
   additiveLeftContainer: {
     flexDirection: 'row',
+    padding: 5,
   },
   additiveRightContent: {
     flexDirection: 'row',
@@ -226,6 +232,9 @@ const styles = StyleSheet.create({
   },
   additivePrice: {
     marginLeft: 10,
+  },
+  quantityText: {
+    fontSize: 16,
   },
 });
 
