@@ -14,6 +14,7 @@ import LocationSearch from "@/src/screens/LocationSearch";
 import RestaurantDetails from "@/src/screens/RestaurantDetails";
 import Basket from "@/src/screens/Basket";
 import {useTranslation} from "react-i18next";
+import Login from "@/src/screens/Login";
 
 
 const Stack = createNativeStackNavigator();
@@ -69,6 +70,16 @@ export default function App() {
                                 component={Basket}
                                 options={{
                                     presentation: 'fullScreenModal',
+                                    gestureEnabled: true,
+                                    gestureDirection: 'horizontal',
+                                }}
+                            />
+                            <Stack.Screen
+                                name="Login"
+                                component={Login}
+                                options={{
+                                    presentation: 'fullScreenModal',
+                                    headerTitle: t('login'),
                                     gestureEnabled: true,
                                     gestureDirection: 'horizontal',
                                 }}

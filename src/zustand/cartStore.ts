@@ -33,11 +33,11 @@ export const useCartStore = create<CartState>((set, get) => ({
     if (existingItemIndex !== -1) {
       newBasket = restaurantCart.basket.map((basketItem, index) =>
           index === existingItemIndex
-              ? { ...basketItem, quantity: basketItem.quantity + 1 }
+              ? { ...basketItem, quantity: basketItem.quantity + item.quantity }
               : basketItem
       );
     } else {
-      newBasket = [...restaurantCart.basket, { ...item, quantity: 1 }];
+      newBasket = [...restaurantCart.basket, { ...item, quantity: item.quantity }];
     }
 
     const newCurrentPrice = calculateCurrentPrice(newBasket);

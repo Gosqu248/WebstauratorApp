@@ -70,7 +70,6 @@ const AddToBasket = ({ restaurantId, menu, visible, onClose }) => {
   const handleGesture = (event) => {
     const { translationY, translationX } = event.nativeEvent;
 
-    // Zamknij modal przy wystarczającym przesunięciu w pionie lub poziomie
     if (translationY > 100 || translationX > 100) {
       onClose();
     } else {

@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native
 import { useTranslation } from "react-i18next";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useCartStore } from "@/src/zustand/cartStore";
-import { OrderMenu } from "@/src/interface/orderMenu";
 import OrderMenuItem from "@/src/components/basket/OrderMenuItem";
 import DeliveryView from "@/src/components/restaurantDetails/DeliveryView";
 import { Delivery } from "@/src/interface/delivery";
@@ -30,10 +29,20 @@ const Basket = () => {
 
     useLayoutEffect(() => {
         navigation.setOptions({
+            headerTransparent: false,
             headerTitle: t('basket'),
-            headerStyle: { backgroundColor: Colors.primary },
+            headerStyle: {
+                backgroundColor: Colors.primary,
+            },
             headerTintColor: 'white',
-            headerTitleAlign: 'center',
+            headerTitleAlign: 'center', // Center the header title
+            headerLeft: () => (
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.roundButton}>
+                        <Ionicons name="arrow-back" size={27} color={Colors.iconOrange} />
+                    </TouchableOpacity>
+                </View>
+            ),
         });
     }, [navigation]);
 

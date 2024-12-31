@@ -8,6 +8,7 @@ import { useRestaurantStore } from '@/src/zustand/restaurantStore';
 import { useAddressEffect } from '@/src/hooks/useAddressEffect';
 import { useDeliveryStore } from '@/src/zustand/delivery';
 import LottieView from "lottie-react-native";
+import Colors from "@/constants/Colors";
 
 export function HomeScreen() {
     const { t } = useTranslation();
@@ -56,16 +57,11 @@ export function HomeScreen() {
     };
 
     return (
-        <LinearGradient
-            colors={['rgba(255, 165, 0, 0.5)', 'rgba(245, 245, 81, 0.5)', 'rgba(250, 58, 58, 0.5)']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.container}
-        >
+        <View style={styles.container}>
             <View style={styles.filterContainer}>
                 {renderContent()}
             </View>
-        </LinearGradient>
+        </View>
     );
 }
 
@@ -74,6 +70,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: 80,
         paddingHorizontal: 10,
+        backgroundColor: Colors.iconOrange,
     },
     loadingContainer: {
         justifyContent: 'center',
