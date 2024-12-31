@@ -67,12 +67,12 @@ const RestaurantDetails = () => {
     return (
         <View style={{ flex: 1 }}>
             <ParallaxScrollView
-                backgroundColor={'#ffffff'}
+                backgroundColor={Colors.primary}
                 style={{ flex: 1 }}
                 scrollEvent={onScroll}
                 parallaxHeaderHeight={250}
                 renderBackground={() => <Image source={{ uri: restaurant?.imageUrl }} style={{ width: '100%', height: '100%' }} />}
-                stickyHeaderHeight={100}
+                stickyHeaderHeight={110}
                 contentBackgroundColor={Colors.lightGrey}
                 renderStickyHeader={() => (
                     <View key="sticky-header" style={styles.stickySection}>
@@ -114,6 +114,7 @@ const RestaurantDetails = () => {
 const styles = StyleSheet.create({
     detailsContainer: {
         backgroundColor: '#ffffff',
+        paddingBottom: 70,
     },
     info: {
         flexDirection: 'row',
@@ -157,7 +158,10 @@ const styles = StyleSheet.create({
     },
     stickySectionText: {
         fontSize: 17,
-        margin: 12,
+        marginVertical: 12,
+        marginHorizontal: 20,
+        color: 'white',
+
     },
     restaurantName: {
         fontSize: 30,

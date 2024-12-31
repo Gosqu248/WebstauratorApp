@@ -13,7 +13,6 @@ const Opinions = ({ restaurant }: { restaurant: Restaurant }) => {
     const getOpinions = async () => {
         const fetchedOpinions = await fetchRestaurantOpinion(restaurant.restaurantId);
         setOpinions(fetchedOpinions);
-        console.log(fetchedOpinions);
     };
 
     useEffect(() => {

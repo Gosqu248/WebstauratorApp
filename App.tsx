@@ -50,6 +50,8 @@ export default function App() {
                                 options={{
                                     presentation: 'fullScreenModal',
                                     headerTitle: 'Search location',
+                                    gestureEnabled: true,
+                                    gestureDirection: 'horizontal',
                                 }}
                             />
                             <Stack.Screen
@@ -58,6 +60,8 @@ export default function App() {
                                 options={{
                                     presentation: 'fullScreenModal',
                                     headerTitle: 'RestaurantDetails',
+                                    gestureEnabled: true,
+                                    gestureDirection: 'horizontal',
                                 }}
                             />
                             <Stack.Screen
@@ -65,6 +69,8 @@ export default function App() {
                                 component={Basket}
                                 options={{
                                     presentation: 'fullScreenModal',
+                                    gestureEnabled: true,
+                                    gestureDirection: 'horizontal',
                                 }}
                             />
                         </Stack.Navigator>

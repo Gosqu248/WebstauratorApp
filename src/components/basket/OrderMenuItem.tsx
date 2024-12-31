@@ -1,15 +1,12 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import React from 'react';
 import { OrderMenu } from '@/src/interface/orderMenu';
-import Colors from '@/constants/Colors';
 import { Ionicons } from "@expo/vector-icons";
-import basket from "@/src/screens/Basket";
-import {useCartStore} from "@/src/zustand/cartStore";
+import { useCartStore } from "@/src/zustand/cartStore";
 
 const OrderMenuItem = ({ orderMenu, restaurantId }: { orderMenu: OrderMenu, restaurantId: number }) => {
     const increaseQuantity = useCartStore(state => state.increaseQuantity);
     const decreaseQuantity = useCartStore(state => state.decreaseQuantity);
-
 
     const menuPrice = orderMenu.chooseAdditives
         ? (orderMenu.chooseAdditives.reduce((total, additive) => total + additive.price, 0) + orderMenu.menu.price * orderMenu.quantity).toFixed(2)
@@ -26,10 +23,9 @@ const OrderMenuItem = ({ orderMenu, restaurantId }: { orderMenu: OrderMenu, rest
                     {orderMenu.chooseAdditives &&
                         orderMenu.chooseAdditives.map((additive) => (
                             <View style={styles.additiveContainer} key={additive.id}>
-                                <Text style={{color: '#5e5d5d'}}>{additive.value}</Text>
+                                <Text style={{ color: '#5e5d5d' }}>{additive.value}</Text>
                             </View>
                         ))}
-
                 </View>
             </View>
 
@@ -38,11 +34,17 @@ const OrderMenuItem = ({ orderMenu, restaurantId }: { orderMenu: OrderMenu, rest
                     {menuPrice} zł
                 </Text>
                 <View style={styles.quantityContainer}>
-                    <TouchableOpacity style={{ paddingHorizontal: 10, paddingVertical: 3 }} onPress={() => decreaseQuantity(restaurantId, orderMenu.menu.id)}>
+                    <TouchableOpacity
+                        style={{ paddingHorizontal: 10, paddingVertical: 3 }}
+                        onPress={() => decreaseQuantity(restaurantId, orderMenu.menu)}
+                    >
                         <Ionicons name={'remove'} size={25} color={'#8a8a8a'} />
                     </TouchableOpacity>
                     <Text style={styles.quantityText}>{orderMenu.quantity}</Text>
-                    <TouchableOpacity style={{ paddingHorizontal: 10 }} onPress={() => increaseQuantity(restaurantId, orderMenu.menu.id)}>
+                    <TouchableOpacity
+                        style={{ paddingHorizontal: 10, paddingVertical: 3 }}
+                        onPress={() => increaseQuantity(restaurantId, orderMenu.menu)}
+                    >
                         <Ionicons name={'add'} size={25} color={'#8a8a8a'} />
                     </TouchableOpacity>
                 </View>
@@ -88,17 +90,11 @@ const styles = StyleSheet.create({
         fontSize: 17,
         color: 'black',
     },
-    button: {
-        width: 30,
-        height: 30,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
     quantityText: {
         fontSize: 20,
         paddingHorizontal: 10,
         color: 'black',
-    }
+    },
 });
 
 export default OrderMenuItem;

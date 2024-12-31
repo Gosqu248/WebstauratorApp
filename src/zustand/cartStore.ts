@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { OrderMenu } from '@/src/interface/orderMenu';
+import {Menu} from "@/src/interface/menu";
 
 interface RestaurantCart {
   basket: OrderMenu[];
@@ -10,8 +11,8 @@ interface CartState {
   carts: Record<number, RestaurantCart>;
   addToBasket: (restaurantId: number, item: OrderMenu) => void;
   getRestaurantCart: (restaurantId: number) => RestaurantCart;
-  increaseQuantity: (restaurantId: number, itemId: number | undefined) => void;
-  decreaseQuantity: (restaurantId: number, itemId: number | undefined) => void;
+  increaseQuantity: (restaurantId: number, menu: Menu ) => void;
+  decreaseQuantity: (restaurantId: number, menu: Menu ) => void;
 }
 
 const calculateCurrentPrice = (basket: OrderMenu[]) =>
@@ -57,16 +58,12 @@ export const useCartStore = create<CartState>((set, get) => ({
     return state.carts[restaurantId] || { basket: [], currentPrice: 0 };
   },
 
-  increaseQuantity: (restaurantId, itemId) => set((state) => {
+  increaseQuantity: (restaurantId, menu) => set((state) => {
     const restaurantCart = state.carts[restaurantId];
     if (!restaurantCart) return state;
 
-    const newBasket = restaurantCart.basket.map(item =>
-    item.menu.id = itemId
-        ? { ...item, quantity: item.quantity + 1 }
-        : item
-    );
-
+    const newBasket = restaurantCart.basket
+        .map(item => item.menu === menu ? { ...item, quantity: item.quantity + 1 } : item)
     const newCurrentPrice = calculateCurrentPrice(newBasket);
 
     return {
@@ -80,12 +77,12 @@ export const useCartStore = create<CartState>((set, get) => ({
     };
   }),
 
-  decreaseQuantity: (restaurantId, itemId) => set((state) => {
+  decreaseQuantity: (restaurantId, menu) => set((state) => {
     const restaurantCart = state.carts[restaurantId];
     if (!restaurantCart) return state;
 
     const newBasket = restaurantCart.basket
-        .map(item => item.menu.id === itemId ? { ...item, quantity: item.quantity - 1 } : item)
+        .map(item => item.menu === menu ? { ...item, quantity: item.quantity - 1 } : item)
         .filter(item => item.quantity > 0);
     const newCurrentPrice = calculateCurrentPrice(newBasket);
 

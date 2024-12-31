@@ -1,15 +1,15 @@
-import React, {useLayoutEffect} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
+import React, { useLayoutEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { useTranslation } from "react-i18next";
-import {useNavigation, useRoute} from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useCartStore } from "@/src/zustand/cartStore";
 import { OrderMenu } from "@/src/interface/orderMenu";
 import OrderMenuItem from "@/src/components/basket/OrderMenuItem";
 import DeliveryView from "@/src/components/restaurantDetails/DeliveryView";
 import { Delivery } from "@/src/interface/delivery";
-import {Ionicons} from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import {useDeliveryStore} from "@/src/zustand/delivery";
+import { useDeliveryStore } from "@/src/zustand/delivery";
 
 const Basket = () => {
     const { t } = useTranslation();
@@ -30,31 +30,26 @@ const Basket = () => {
 
     useLayoutEffect(() => {
         navigation.setOptions({
-            headerTransparent: false,
             headerTitle: t('basket'),
-            headerStyle: {
-                backgroundColor: Colors.primary,
-            },
+            headerStyle: { backgroundColor: Colors.primary },
             headerTintColor: 'white',
-            headerTitleAlign: 'center', // Center the header title
-            headerLeft: () => (
-                <View style={styles.header}>
-                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.roundButton}>
-                        <Ionicons name="arrow-back" size={27} color={Colors.iconOrange} />
-                    </TouchableOpacity>
-                </View>
-            ),
+            headerTitleAlign: 'center',
         });
     }, [navigation]);
 
     return (
         <View style={styles.container}>
             <DeliveryView delivery={restaurant.delivery as Delivery} />
-            <ScrollView style={styles.basketContainer}>
-                {basket.map((orderMenu: OrderMenu) => (
-                    <OrderMenuItem orderMenu={orderMenu} restaurantId={restaurant.restaurantId} key={orderMenu.menu.id} />
-                ))}
-            </ScrollView>
+            <FlatList
+                data={basket}
+                keyExtractor={(item, index) => `${item.menu.id}-${index}`}
+                renderItem={({ item }) => (
+                    <OrderMenuItem
+                        orderMenu={item}
+                        restaurantId={restaurant.restaurantId}
+                    />
+                )}
+            />
 
             <View style={styles.priceContainer}>
                 <View style={styles.priceItem}>

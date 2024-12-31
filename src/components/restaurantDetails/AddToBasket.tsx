@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Modal, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Modal, Alert, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '@/constants/Colors';
 import { useCartStore } from '@/src/zustand/cartStore';
 import { useTranslation } from "react-i18next";
+import { PanGestureHandler, State } from 'react-native-gesture-handler';
 
 const AddToBasket = ({ restaurantId, menu, visible, onClose }) => {
   const [quantity, setQuantity] = useState(1);
@@ -12,6 +13,8 @@ const AddToBasket = ({ restaurantId, menu, visible, onClose }) => {
   const [groupedAdditives, setGroupedAdditives] = useState({});
   const [selectedAdditives, setSelectedAdditives] = useState([]);
   const addToBasket = useCartStore(state => state.addToBasket);
+
+  const translateY = new Animated.Value(0);
 
   useEffect(() => {
     if (menu.additives) {
@@ -64,61 +67,89 @@ const AddToBasket = ({ restaurantId, menu, visible, onClose }) => {
     onClose();
   };
 
+  const handleGesture = (event) => {
+    const { translationY, translationX } = event.nativeEvent;
+
+    // Zamknij modal przy wystarczającym przesunięciu w pionie lub poziomie
+    if (translationY > 100 || translationX > 100) {
+      onClose();
+    } else {
+      Animated.spring(translateY, {
+        toValue: 0,
+        useNativeDriver: true,
+      }).start();
+    }
+  };
+
   return (
       <Modal visible={visible} animationType="slide" transparent={true} onRequestClose={onClose}>
-        <TouchableOpacity style={styles.modalContainer} onPress={onClose} activeOpacity={1}>
-          <View style={styles.modalContent}>
-            <View style={styles.topContainer}>
-              <View style={styles.dragIndicator} />
-              <Text style={styles.nameText}>{menu.name}</Text>
-              <Text>{menu.ingredients}</Text>
-              <Text style={styles.priceText}>{menu.price?.toFixed(2)} zł</Text>
-            </View>
+        <TouchableOpacity style={styles.modalContainer} activeOpacity={1}>
+          <PanGestureHandler
+              onGestureEvent={Animated.event(
+                  [{ nativeEvent: { translationY: translateY, translationX: new Animated.Value(0) } }],
+                  { useNativeDriver: true }
+              )}
+              onHandlerStateChange={(event) => {
+                if (event.nativeEvent.state === State.END) {
+                  handleGesture(event);
+                }
+              }}
+          >
+            <Animated.View style={[styles.modalContent, { transform: [{ translateY }] }]}>
+              <View style={styles.topContainer}>
+                <View style={styles.dragIndicator} />
+                <Text style={styles.nameText}>{menu.name}</Text>
+                <Text>{menu.ingredients}</Text>
+                <Text style={styles.priceText}>{menu.price?.toFixed(2)} zł</Text>
+              </View>
 
-            {menu.additives?.length > 0 && (
-                <View style={styles.additivesView}>
-                  <ScrollView>
-                    {Object.keys(groupedAdditives).map((additiveName) => (
-                        <View key={additiveName} style={styles.additiveGroup}>
-                          <Text style={styles.additiveGroupName}>{additiveName}</Text>
-                          {groupedAdditives[additiveName].map((additive) => (
-                              <TouchableOpacity
-                                  key={additive.id}
-                                  style={[styles.additiveItem, isSelected(additive) && styles.selectedAdditive]}
-                                  onPress={() => selectAdditive(additive)}
-                              >
-                                <View style={styles.additiveItemContent}>
-                                  <View style={styles.additiveLeftContainer}>
-                                    <Text>{additive.value}</Text>
-                                    {additive.price > 0 && <Text style={styles.additivePrice}>(+ {additive.price.toFixed(2)} zł)</Text>}
+              {menu.additives?.length > 0 && (
+                  <View style={styles.additivesView}>
+                    <ScrollView>
+                      {Object.keys(groupedAdditives).map((additiveName) => (
+                          <View key={additiveName} style={styles.additiveGroup}>
+                            <Text style={styles.additiveGroupName}>{additiveName}</Text>
+                            {groupedAdditives[additiveName].map((additive) => (
+                                <TouchableOpacity
+                                    key={additive.id}
+                                    style={[styles.additiveItem, isSelected(additive) && styles.selectedAdditive]}
+                                    onPress={() => selectAdditive(additive)}
+                                >
+                                  <View style={styles.additiveItemContent}>
+                                    <View style={styles.additiveLeftContainer}>
+                                      <Text>{additive.value}</Text>
+                                      {additive.price > 0 && (
+                                          <Text style={styles.additivePrice}>(+ {additive.price.toFixed(2)} zł)</Text>
+                                      )}
+                                    </View>
+                                    <View style={styles.additiveRightContent}>
+                                      {isSelected(additive) && <Ionicons name="checkmark-circle" size={20} color={Colors.primary} />}
+                                    </View>
                                   </View>
-                                  <View style={styles.additiveRightContent}>
-                                    {isSelected(additive) && <Ionicons name="checkmark-circle" size={20} color={Colors.primary} />}
-                                  </View>
-                                </View>
-                              </TouchableOpacity>
-                          ))}
-                        </View>
-                    ))}
-                  </ScrollView>
+                                </TouchableOpacity>
+                            ))}
+                          </View>
+                      ))}
+                    </ScrollView>
+                  </View>
+              )}
+
+              <View style={styles.bottomContainer}>
+                <View style={styles.quantityView}>
+                  <TouchableOpacity onPress={removeQuantity} style={{ padding: 5 }}>
+                    <Ionicons name={'remove'} size={25} color={'#8a8a8a'} />
+                  </TouchableOpacity>
+                  <Text style={styles.quantityText}>{quantity}</Text>
+                  <TouchableOpacity onPress={addQuantity} style={{ padding: 5 }}>
+                    <Ionicons name={'add'} size={25} color={'#8a8a8a'} />
+                  </TouchableOpacity>
                 </View>
-            )}
-
-            <View style={styles.bottomContainer}>
-              <View style={styles.quantityView}>
-                <TouchableOpacity onPress={removeQuantity} style={{ padding: 5 }}>
-                  <Ionicons name={'remove'} size={25} color={'#8a8a8a'} />
-                </TouchableOpacity>
-                <Text style={styles.quantityText}>{quantity}</Text>
-                <TouchableOpacity onPress={addQuantity} style={{ padding: 5 }}>
-                  <Ionicons name={'add'} size={25} color={'#8a8a8a'} />
+                <TouchableOpacity style={styles.button} onPress={handleAddToBasket}>
+                  <Text style={styles.buttonText}>{price.toFixed(2)} zł</Text>
                 </TouchableOpacity>
               </View>
-              <TouchableOpacity style={styles.button} onPress={handleAddToBasket}>
-                <Text style={styles.buttonText}>{price.toFixed(2)} zł</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+            </Animated.View>
+          </PanGestureHandler>
         </TouchableOpacity>
       </Modal>
   );
@@ -132,7 +163,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: '100%',
-    minHeight: '20%',
+    minHeight: '25%',
     backgroundColor: '#fff',
     paddingVertical: 20,
     borderRadius: 10,
