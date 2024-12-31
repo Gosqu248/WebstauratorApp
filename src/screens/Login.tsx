@@ -1,11 +1,160 @@
-import {View, Text} from 'react-native'
-import React from 'react'
+import {View, Text, TextInput, TouchableOpacity, StyleSheet, Image} from 'react-native';
+import React, {useLayoutEffect} from 'react';
+import Colors from "@/constants/Colors";
+import {Ionicons} from "@expo/vector-icons";
+import {useNavigation} from "@react-navigation/native";
+import {useTranslation} from "react-i18next";
 
 const Login = () => {
+    const navigation = useNavigation();
+    const {t} = useTranslation();
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerTransparent: false,
+            headerTitle: t('login'),
+            headerStyle: {
+                backgroundColor: Colors.primary,
+            },
+            headerTintColor: 'white',
+            headerTitleAlign: 'center',
+            headerLeft: () => (
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.roundButton}>
+                        <Ionicons name="arrow-back" size={27} color={'white'} />
+                    </TouchableOpacity>
+                </View>
+            ),
+        });
+    }, [navigation]);
+
     return (
-        <View>
-            <Text>Login</Text>
+        <View style={styles.container}>
+            <TouchableOpacity style={styles.googleButton}>
+                <Image style={styles.image} source={require('@/assets/images/googleImg.png')} />
+                <Text style={styles.googleButtonText}>{t('loginWithGoogle')}</Text>
+            </TouchableOpacity>
+
+            <View style={styles.separatorContainer}>
+                <View style={styles.separator} />
+                <Text style={styles.separatorText}>{t('or')}</Text>
+                <View style={styles.separator} />
+            </View>
+
+            <TextInput
+                style={styles.input}
+                placeholder={t('email')}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                placeholderTextColor={Colors.iconOrange}
+            />
+
+            <TextInput
+                style={styles.input}
+                placeholder={t('password')}
+                secureTextEntry
+                autoCapitalize="none"
+                placeholderTextColor={Colors.iconOrange}
+            />
+
+            <TouchableOpacity style={styles.loginButton}>
+                <Text style={styles.loginButtonText}>{t('login')}</Text>
+            </TouchableOpacity>
+
+
+            <View style={{flexDirection: 'row', padding: 20}}>
+                <Text style={{fontSize: 18, color: '#797777'}}>{t('dontHaveAccount')}</Text>
+                <Text style={styles.createAccountText}  onPress={() => navigation.navigate('Register')}> {t('createNow')} </Text>
+            </View>
         </View>
-    )
-}
-export default Login
+    );
+};
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        padding: 30,
+        paddingTop: 40,
+        backgroundColor: '#ffffff',
+    },
+    header: {
+        width: 100,
+        height: 50,
+        flexDirection: 'row',
+    },
+    roundButton: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    googleButton: {
+        width: '100%',
+        flexDirection: 'row',
+        borderWidth: 2,
+        borderColor: '#aba9a9',
+        padding: 10,
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    googleButtonText: {
+        color: '#807f7f',
+        fontSize: 16,
+        paddingLeft: 20,
+        fontWeight: 'bold',
+    },
+    separatorContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 20,
+    },
+    separator: {
+        flex: 1,
+        height: 1,
+        backgroundColor: '#aba9a9',
+    },
+    separatorText: {
+        marginHorizontal: 10,
+        fontSize: 16,
+        color: '#807f7f',
+    },
+    input: {
+        width: '100%',
+        padding: 20,
+        borderRadius: 8,
+        borderColor: Colors.iconOrange,
+        borderWidth: 1,
+        marginBottom: 20,
+        fontSize: 16,
+        color: '#000000',
+    },
+    loginButton: {
+        width: '100%',
+        padding: 15,
+        borderRadius: 8,
+        backgroundColor: Colors.primary,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    loginButtonText: {
+        color: '#ffffff',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    createAccountText: {
+        color: Colors.iconOrange,
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    image: {
+        width: 35,
+        height: 45,
+    },
+});
+
+export default Login;

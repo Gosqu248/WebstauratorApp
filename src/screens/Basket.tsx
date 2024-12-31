@@ -39,7 +39,7 @@ const Basket = () => {
             headerLeft: () => (
                 <View style={styles.header}>
                     <TouchableOpacity onPress={() => navigation.goBack()} style={styles.roundButton}>
-                        <Ionicons name="arrow-back" size={27} color={Colors.iconOrange} />
+                        <Ionicons name="arrow-back" size={27} color={'white'} />
                     </TouchableOpacity>
                 </View>
             ),
@@ -129,7 +129,6 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 20,
-        backgroundColor: '#ffffff',
         justifyContent: 'center',
         alignItems: 'center',
     },

@@ -8,13 +8,12 @@ import {BottomSheetModalProvider} from "@gorhom/bottom-sheet";
 import {DrawerLayout, GestureHandlerRootView} from "react-native-gesture-handler";
 import {useRef} from "react";
 import SideMenu from "@/src/components/home/SideMenu";
-import {Ionicons} from "@expo/vector-icons";
-import Colors from "@/constants/Colors";
 import LocationSearch from "@/src/screens/LocationSearch";
 import RestaurantDetails from "@/src/screens/RestaurantDetails";
 import Basket from "@/src/screens/Basket";
 import {useTranslation} from "react-i18next";
 import Login from "@/src/screens/Login";
+import Register from "@/src/screens/Register";
 
 
 const Stack = createNativeStackNavigator();
@@ -30,13 +29,13 @@ export default function App() {
     return (
         <GestureHandlerRootView style={{flex: 1}}>
             <BottomSheetModalProvider>
+                    <NavigationContainer>
                 <DrawerLayout
                     ref={drawerRef}
                     drawerWidth={320}
                     drawerPosition="right"
                     renderNavigationView={() => <SideMenu/>}
                 >
-                    <NavigationContainer>
                         <Stack.Navigator>
                             <Stack.Screen
                                 name="Home"
@@ -84,9 +83,19 @@ export default function App() {
                                     gestureDirection: 'horizontal',
                                 }}
                             />
+                            <Stack.Screen
+                                name="Register"
+                                component={Register}
+                                options={{
+                                    presentation: 'fullScreenModal',
+                                    headerTitle: t('register'),
+                                    gestureEnabled: true,
+                                    gestureDirection: 'horizontal',
+                                }}
+                            />
                         </Stack.Navigator>
-                    </NavigationContainer>
                 </DrawerLayout>
+                    </NavigationContainer>
             </BottomSheetModalProvider>
         </GestureHandlerRootView>
     );
