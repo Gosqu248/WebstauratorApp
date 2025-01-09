@@ -181,5 +181,6 @@
   "loading": "Loading...",
   "currentLocation": "Current location",
   "errorOrNotFound": "Restaurant not found or address is invalid",
-  "error": "Error"
+  "error": "Error",
+  "reLogin": "Re-login"
 }

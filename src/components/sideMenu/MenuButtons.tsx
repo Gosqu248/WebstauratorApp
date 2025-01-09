@@ -5,9 +5,12 @@ import Colors from "@/constants/Colors";
 import {FontAwesome, Ionicons} from '@expo/vector-icons';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import useAuthStore from "@/src/zustand/auth";
 
 const MenuButtons = () => {
     const { t, i18n } = useTranslation();
+    const isAuth = useAuthStore().isAuthenticated;
+    const logout = useAuthStore().logout;
 
     const toggleLanguage = () => {
         const newLanguage = i18n.language === 'pl' ? 'en' : 'pl';
@@ -47,6 +50,14 @@ const MenuButtons = () => {
 
                 </View>
             </TouchableOpacity>
+            { isAuth && (
+                <>
+                    <TouchableOpacity style={[styles.menuItem, styles.logoutButton]} onPress={logout}>
+                        <MaterialIcons name="logout" style={styles.icon} />
+                        <Text style={styles.menuText}>{t('logout')}</Text>
+                    </TouchableOpacity>
+                </>
+            )}
         </View>
     );
 };
@@ -86,5 +97,9 @@ const styles = StyleSheet.create({
         height: 24,
 
     },
+    logoutButton: {
+        backgroundColor: "#fd9e9e",
+        marginTop: 20,
+    }
 });
 export default MenuButtons;

@@ -5,10 +5,12 @@ import Colors from "@/constants/Colors";
 import { Ionicons } from '@expo/vector-icons';
 import MenuButtons from "@/src/components/sideMenu/MenuButtons";
 import {useNavigation} from "@react-navigation/native";
+import useAuthStore from "@/src/zustand/auth";
 
 const SideMenu = () => {
     const { t } = useTranslation();
     const navigation = useNavigation();
+    const isAuth = useAuthStore().isAuthenticated;
 
     return (
         <View style={styles.container}>
@@ -25,12 +27,17 @@ const SideMenu = () => {
             </View>
             <View style={styles.mainContainer}>
                 <View style={styles.buttonRow}>
-                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Login')}>
-                        <Text style={styles.buttonText}>{t('login')}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.button, { backgroundColor: Colors.red }]} onPress={() => navigation.navigate('Register')}>
-                        <Text style={styles.buttonText}>{t('createAccount')}</Text>
-                    </TouchableOpacity>
+                    { !isAuth && (
+                      <>
+                          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Login')}>
+                              <Text style={styles.buttonText}>{t('login')}</Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity style={[styles.button, { backgroundColor: Colors.red }]} onPress={() => navigation.navigate('Register')}>
+                              <Text style={styles.buttonText}>{t('createAccount')}</Text>
+                          </TouchableOpacity>
+                      </>
+                    )}
+
                 </View>
                 <MenuButtons />
             </View>

@@ -182,4 +182,5 @@ export interface TranslationKeys {
     addMoreProduct: string;
     hello: string;
     myContactData: string;
+    reLogin: string;
 }

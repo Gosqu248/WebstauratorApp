@@ -7,7 +7,7 @@ const useAuthStore = create((set, get) => ({
     jwt: null,
     user: null,
 
-    // Rejestracja użytkownika
+
     register: async (user) => {
         try {
             return await authService.register(user);

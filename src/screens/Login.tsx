@@ -1,13 +1,53 @@
 import {View, Text, TextInput, TouchableOpacity, StyleSheet, Image} from 'react-native';
-import React, {useLayoutEffect} from 'react';
+import React, {useLayoutEffect, useState} from 'react';
 import Colors from "@/constants/Colors";
 import {Ionicons} from "@expo/vector-icons";
 import {useNavigation} from "@react-navigation/native";
 import {useTranslation} from "react-i18next";
+import useAuthStore from "@/src/zustand/auth";
 
 const Login = () => {
     const navigation = useNavigation();
     const {t} = useTranslation();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [faCode, setFaCode] = useState('');
+    const [error, setError] = useState('');
+    const [fa, set2fa] = useState(false);
+    const login = useAuthStore().login;
+    const verify2FA = useAuthStore().verify2FA;
+
+    const handleLogin = async () => {
+        try {
+            const success = await login(email, password);
+            if (success) {
+                set2fa(true);
+                console.log('Sending 2fa code');
+            } else {
+                setError('Invalid email or password');
+                console.log('Invalid email or password');
+            }
+        } catch (error) {
+            setError('Something went wrong');
+            console.error('Something went wrong:', error.response?.data || error.message);
+        }
+    };
+
+    const handle2fa = async () => {
+        try {
+            const jwt = await verify2FA(faCode);
+            if (jwt) {
+                console.log('Logged in');
+                navigation.goBack();
+            } else {
+                setError('Invalid 2FA code');
+                console.log('Invalid 2FA code');
+            }
+        } catch (error) {
+            setError('Something went wrong');
+            console.error('Something went wrong:', error.response?.data || error.message);
+        }
+    }
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -40,26 +80,49 @@ const Login = () => {
                 <Text style={styles.separatorText}>{t('or')}</Text>
                 <View style={styles.separator} />
             </View>
+            { !fa ? (
+                <>
+                    <TextInput
+                        style={styles.input}
+                        value={email}
+                        onChangeText={setEmail}
+                        placeholder={t('email')}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                        placeholderTextColor={Colors.iconOrange}
+                    />
 
-            <TextInput
-                style={styles.input}
-                placeholder={t('email')}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                placeholderTextColor={Colors.iconOrange}
-            />
+                    <TextInput
+                        style={styles.input}
+                        value={password}
+                        onChangeText={setPassword}
+                        placeholder={t('password')}
+                        secureTextEntry
+                        autoCapitalize="none"
+                        placeholderTextColor={Colors.iconOrange}
+                    />
+                    <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+                        <Text style={styles.loginButtonText}>{t('sendCode')}</Text>
+                    </TouchableOpacity>
 
-            <TextInput
-                style={styles.input}
-                placeholder={t('password')}
-                secureTextEntry
-                autoCapitalize="none"
-                placeholderTextColor={Colors.iconOrange}
-            />
+                </>
+            ) : (
+                <>
+                    <TextInput
+                        style={styles.input}
+                        value={faCode}
+                        onChangeText={setFaCode}
+                        placeholder={t('twoFactorCode')}
+                        autoCapitalize="none"
+                        placeholderTextColor={Colors.iconOrange}
+                    />
+                    <TouchableOpacity style={styles.loginButton} onPress={handle2fa}>
+                        <Text style={styles.loginButtonText}>{t('login')}</Text>
+                    </TouchableOpacity>
 
-            <TouchableOpacity style={styles.loginButton}>
-                <Text style={styles.loginButtonText}>{t('login')}</Text>
-            </TouchableOpacity>
+                </>
+            )
+            }
 
 
             <View style={{flexDirection: 'row', padding: 20}}>
@@ -142,6 +205,20 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     loginButtonText: {
+        color: '#ffffff',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    resetButton: {
+        width: '100%',
+        padding: 15,
+        borderRadius: 8,
+        backgroundColor: Colors.iconOrange,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    resetButtonText: {
         color: '#ffffff',
         fontSize: 16,
         fontWeight: 'bold',
