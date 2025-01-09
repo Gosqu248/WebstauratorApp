@@ -31,7 +31,7 @@ export function HomeScreen() {
                         style={styles.lottie}
                     />
                 </View>
-            );   ;
+            );
         }
 
         if (error || restaurants.length === 0) {

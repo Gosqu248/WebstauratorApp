@@ -1,10 +1,10 @@
 import axios from "axios";
-import config from "@/src/config";
+import api from "@/src/api";
 import { Menu } from "@/src/interface/menu";
 
 export const fetchMenu = async (restaurantId: string): Promise<(Menu | { isHeader: true; title: string })[]> => {
     try {
-        const response = await axios.get<Menu[]>(`${config.backendUrl}/menu/getRestaurantMenu?restaurantId=${restaurantId}`);
+        const response = await axios.get<Menu[]>(`${api.backendUrl}/menu/getRestaurantMenu?restaurantId=${restaurantId}`);
         if (response?.data) {
             return response.data.reduce((acc, item) => {
                 const categoryHeaderIndex = acc.findIndex(el => el.isHeader && el.title === item.category);

@@ -18,8 +18,8 @@ const SideMenu = () => {
                         <Ionicons name="happy-outline" style={styles.icon} />
                     </View>
                     <View style={styles.textContainer}>
-                        <Text style={styles.greetingText}>Cześć!</Text>
-                        <Text style={styles.contactText}>Moje dane kontaktowe</Text>
+                        <Text style={styles.greetingText}>{t('hello')}</Text>
+                        <Text style={styles.contactText}>{t('myContactData')}</Text>
                     </View>
                 </View>
             </View>

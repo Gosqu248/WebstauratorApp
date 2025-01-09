@@ -180,4 +180,6 @@ export interface TranslationKeys {
     basket: string;
     goToCheckout: string;
     addMoreProduct: string;
+    hello: string;
+    myContactData: string;
 }

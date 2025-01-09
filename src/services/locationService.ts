@@ -1,8 +1,8 @@
-import config from "@/src/config";
+import api from "@/src/api";
 
 export const fetchSuggestions = async (partialName) => {
     try {
-        const response = await fetch(`${config.backendUrl}/suggestions/get?partialName=${encodeURIComponent(partialName)}`);
+        const response = await fetch(`${api.backendUrl}/suggestions/get?partialName=${encodeURIComponent(partialName)}`);
         return await response.json();
     } catch (error) {
         console.error('Error fetching suggestions:', error);
@@ -12,7 +12,7 @@ export const fetchSuggestions = async (partialName) => {
 
 export const fetchCoordinates = async (location) => {
     try {
-        const response = await fetch(`${config.backendUrl}/suggestions/getCoordinates?address=${encodeURIComponent(location)}`);
+        const response = await fetch(`${api.backendUrl}/suggestions/getCoordinates?address=${encodeURIComponent(location)}`);
         return await response.json();
     } catch (error) {
         console.error('Error fetching coordinates:', error);

@@ -12,7 +12,7 @@ import { fetchDeliveryHour } from "@/src/services/deliveryHourService";
 import Colors from "@/constants/Colors";
 import { fetchRestaurantPaymentMethods } from "@/src/services/paymentService";
 import { PaymentMethod } from "@/src/interface/paymentMethod";
-import config from "@/src/config";
+import api from "@/src/api";
 
 const Info = ({ restaurant }: { restaurant: Restaurant }) => {
   const mapRef = useRef(null);
@@ -20,7 +20,7 @@ const Info = ({ restaurant }: { restaurant: Restaurant }) => {
   const [address, setAddress] = useState<RestaurantAddress>();
   const [deliveryHour, setDeliveryHour] = useState<DeliveryHour[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
-  const imgUrl = config.backendImgUrl;
+  const imgUrl = api.backendImgUrl;
 
   const location = {
     latitude: restaurant.latitude,

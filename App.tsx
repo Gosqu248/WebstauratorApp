@@ -14,6 +14,7 @@ import Basket from "@/src/screens/Basket";
 import {useTranslation} from "react-i18next";
 import Login from "@/src/screens/Login";
 import Register from "@/src/screens/Register";
+import Order from "@/src/screens/Order";
 
 
 const Stack = createNativeStackNavigator();
@@ -93,6 +94,15 @@ export default function App() {
                                     gestureDirection: 'horizontal',
                                 }}
                             />
+                            <Stack.Screen
+                                name="Order"
+                                component={Order}
+                                options={{
+                                    presentation: 'fullScreenModal',
+                                    gestureEnabled: true,
+                                    gestureDirection: 'horizontal',
+                                }}
+                            />
                         </Stack.Navigator>
                 </DrawerLayout>
                     </NavigationContainer>
@@ -101,11 +111,4 @@ export default function App() {
     );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+

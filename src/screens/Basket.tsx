@@ -94,7 +94,7 @@ const Basket = () => {
             <View style={styles.buttonContainer}>
                 { subTotal > restaurant.delivery.minimumPrice
                     ? (
-                        <TouchableOpacity style={styles.orderButton}>
+                        <TouchableOpacity style={styles.orderButton} onPress={() => navigation.navigate('Order')}>
                             <Text style={styles.buttonText}>{t('goToCheckout')} | {total.toFixed(2)} zł</Text>
                         </TouchableOpacity>
                     )

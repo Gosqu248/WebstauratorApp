@@ -1,12 +1,12 @@
 import React, { useRef, useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import MapView, { UrlTile } from 'react-native-maps';
+import MapView, { UrlTile, Marker } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native';
 import PlaceAutocomplete from '@/src/components/searchLocation/PlaceAutocomplete';
 import Colors from '@/constants/Colors';
-import {useTranslation} from "react-i18next";
-import {useAddressStore} from "@/src/zustand/address";
-import {useCoordinatesStore} from "@/src/zustand/coordinates";
+import { useTranslation } from "react-i18next";
+import { useAddressStore } from "@/src/zustand/address";
+import { useCoordinatesStore } from "@/src/zustand/coordinates";
 
 const LocationSearch = () => {
     const setAddress = useAddressStore((state) => state.setAddress);
@@ -48,7 +48,7 @@ const LocationSearch = () => {
 
     return (
         <View style={{ flex: 1 }}>
-            <PlaceAutocomplete onLocationSelected={handleLocationChange} address={handleAddress}/>
+            <PlaceAutocomplete onLocationSelected={handleLocationChange} address={handleAddress} />
             <MapView
                 ref={mapRef}
                 style={{ flex: 1 }}
@@ -59,6 +59,7 @@ const LocationSearch = () => {
                     urlTemplate="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     maximumZ={100}
                 />
+                <Marker coordinate={{ latitude: location.latitude, longitude: location.longitude }} />
             </MapView>
             <View style={styles.absoluteBox}>
                 <TouchableOpacity style={styles.button} onPress={confirmLocation}>
