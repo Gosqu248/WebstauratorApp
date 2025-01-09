@@ -183,4 +183,7 @@ export interface TranslationKeys {
     hello: string;
     myContactData: string;
     reLogin: string;
+    invalidEmailOrPassword: string;
+    somethingWentWrong: string;
+    invalid2FA: string;
 }

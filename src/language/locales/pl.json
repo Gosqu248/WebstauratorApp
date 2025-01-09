@@ -182,5 +182,8 @@
   "currentLocation": "Aktualna lokalizacja",
   "errorOrNotFound": "Nie znaleziono restauracji lub adres jest nieprawidłowy",
   "error": "Błąd",
-  "reLogin": "Ponów logowanie"
+  "reLogin": "Ponów logowanie",
+  "invalidEmailOrPassword": "Nieprawidłowy adres e-mail lub hasło",
+  "somethingWentWrong": "Coś poszło nie tak",
+  "invalid2FA": "Nieprawidłowy kod weryfikacyjny"
 }

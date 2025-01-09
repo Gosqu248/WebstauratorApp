@@ -13,6 +13,7 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [faCode, setFaCode] = useState('');
     const [error, setError] = useState('');
+    const [isError, setIsError] = useState(false);
     const [fa, set2fa] = useState(false);
     const login = useAuthStore().login;
     const verify2FA = useAuthStore().verify2FA;
@@ -22,13 +23,15 @@ const Login = () => {
             const success = await login(email, password);
             if (success) {
                 set2fa(true);
-                console.log('Sending 2fa code');
             } else {
-                setError('Invalid email or password');
-                console.log('Invalid email or password');
+                const errorText = t('invalidEmailOrPassword');
+                setError(errorText);
+                setIsError(true);
             }
         } catch (error) {
-            setError('Something went wrong');
+            const errorText = t('somethingWentWrong');
+            setError(errorText);
+            setIsError(true);
             console.error('Something went wrong:', error.response?.data || error.message);
         }
     };
@@ -37,14 +40,16 @@ const Login = () => {
         try {
             const jwt = await verify2FA(faCode);
             if (jwt) {
-                console.log('Logged in');
                 navigation.goBack();
             } else {
-                setError('Invalid 2FA code');
-                console.log('Invalid 2FA code');
+                const errorText = t('invalid2FA');
+                setError(errorText);
+                setIsError(true);
             }
         } catch (error) {
-            setError('Something went wrong');
+            const errorText = t('somethingWentWrong');
+            setError(errorText);
+            setIsError(true);
             console.error('Something went wrong:', error.response?.data || error.message);
         }
     }
@@ -101,6 +106,7 @@ const Login = () => {
                         autoCapitalize="none"
                         placeholderTextColor={Colors.iconOrange}
                     />
+                    { isError && <Text style={styles.error}>{error}</Text>}
                     <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
                         <Text style={styles.loginButtonText}>{t('sendCode')}</Text>
                     </TouchableOpacity>
@@ -123,7 +129,6 @@ const Login = () => {
                 </>
             )
             }
-
 
             <View style={{flexDirection: 'row', padding: 20}}>
                 <Text style={{fontSize: 18, color: '#797777'}}>{t('dontHaveAccount')}</Text>
@@ -232,6 +237,13 @@ const styles = StyleSheet.create({
         width: 35,
         height: 45,
     },
+    error: {
+        color: 'red',
+        marginBottom: 10,
+        textAlign: 'center',
+        padding: 20,
+        fontSize: 18,
+    }
 });
 
 export default Login;

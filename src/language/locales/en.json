@@ -182,5 +182,8 @@
   "currentLocation": "Current location",
   "errorOrNotFound": "Restaurant not found or address is invalid",
   "error": "Error",
-  "reLogin": "Re-login"
+  "reLogin": "Re-login",
+  "invalidEmailOrPassword": "Invalid email or password",
+  "somethingWentWrong": "Something went wrong",
+  "invalid2FA": "Invalid verification code"
 }
