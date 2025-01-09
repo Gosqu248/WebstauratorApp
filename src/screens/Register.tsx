@@ -4,6 +4,8 @@ import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
+import {authService} from "@/src/services/authService";
+import {User} from "@/src/interface/user";
 
 const Register = () => {
     const navigation = useNavigation();
@@ -12,6 +14,10 @@ const Register = () => {
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -32,19 +38,73 @@ const Register = () => {
         });
     }, [navigation]);
 
-    const handleRegister = () => {
+    const register = async (name, email, password) => {
+        const user = {name, email, password}
+        try {
+            authService.register(user)
+            navigation.goBack();
+        } catch (error) {
+            console.error('Register error:', error);
+        }
+    }
+
+    const handleRegister = async () => {
         setFormSubmitted(true);
-        // Add your validation logic here
-        // Example:
-        // if (!email) {
-        //     setEmailError(t('emailError'));
-        // }
-        // if (!password) {
-        //     setPasswordError(t('passwordError'));
-        // }
-        // if (password !== confirmPassword) {
-        //     setConfirmPasswordError(t('confirmPasswordError'));
-        // }
+
+        // Reset errors
+        setEmailError('');
+        setPasswordError('');
+        setConfirmPasswordError('');
+
+        // Validation logic
+        let valid = true;
+
+        if (!name) {
+            valid = false;
+        }
+
+        if (!email) {
+            setEmailError(t('emailError'));
+            valid = false;
+        } else {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                setEmailError(t('invalidEmailError'));
+
+                valid = false;
+            }
+        }
+
+        if (!password) {
+            setPasswordError(t('passwordError'));
+            valid = false;
+        } else {
+            if (password.length < 8) {
+                setPasswordError(t('passwordMinLengthError'));
+                valid = false;
+            }
+            const passwordPattern = /^(?=.*[A-Z])(?=.*[!#]).*$/;
+            if (!passwordPattern.test(password)) {
+                setPasswordError(t('passwordPatternError'));
+                valid = false;
+            }
+        }
+
+        if (!confirmPassword) {
+            setConfirmPasswordError(t('confirmPasswordError'));
+            valid = false;
+        } else if (password !== confirmPassword) {
+            setConfirmPasswordError(t('passwordMismatchError'));
+            valid = false;
+        }
+
+        if (valid) {
+            try {
+                await register(name, email, password);
+            } catch (error) {
+                console.error('Register error:', error);
+            }
+        }
     };
 
     return (
@@ -63,6 +123,8 @@ const Register = () => {
 
                 <TextInput
                     style={styles.input}
+                    value={name}
+                    onChangeText={setName}
                     placeholder={t('name')}
                     autoCapitalize="none"
                     placeholderTextColor={Colors.iconOrange}
@@ -70,6 +132,8 @@ const Register = () => {
 
                 <TextInput
                     style={styles.input}
+                    value={email}
+                    onChangeText={setEmail}
                     placeholder={t('email')}
                     keyboardType="email-address"
                     autoCapitalize="none"
@@ -84,20 +148,24 @@ const Register = () => {
 
                 <TextInput
                     style={styles.input}
+                    value={password}
+                    onChangeText={setPassword}
                     placeholder={t('password')}
                     secureTextEntry
                     autoCapitalize="none"
                     placeholderTextColor={Colors.iconOrange}
                 />
-                {formSubmitted && passwordError ? (
+                {formSubmitted && passwordError && (
                     <View style={styles.errorContainer}>
                         <Ionicons name="alert-circle" size={20} color="red" />
                         <Text style={styles.errorText}>{passwordError}</Text>
                     </View>
-                ) : null}
+                )}
 
                 <TextInput
                     style={styles.input}
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
                     placeholder={t('confirmPassword')}
                     secureTextEntry
                     autoCapitalize="none"

@@ -1,21 +1,12 @@
 import {create} from 'zustand';
 import {authService} from '@/src/services/authService';
-import AsyncStorage from "@react-native-async-storage/async-storage"; // importujemy authService
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const useAuthStore = create((set, get) => ({
     isAuthenticated: false,
     jwt: null,
     user: null,
 
-
-    register: async (user) => {
-        try {
-            return await authService.register(user);
-        } catch (error) {
-            console.error('Error in register:', error);
-            throw error;
-        }
-    },
 
     // Logowanie użytkownika
     login: async (email, password) => {
@@ -36,6 +27,8 @@ const useAuthStore = create((set, get) => ({
         try {
             const jwt = await authService.verify2FA(code);
             set({ isAuthenticated: true, jwt });
+            await get().getUser();
+
             return jwt;
         } catch (error) {
             console.error('2FA verification error:', error);

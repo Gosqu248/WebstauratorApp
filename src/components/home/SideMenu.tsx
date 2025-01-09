@@ -11,6 +11,8 @@ const SideMenu = () => {
     const { t } = useTranslation();
     const navigation = useNavigation();
     const isAuth = useAuthStore().isAuthenticated;
+    const user = useAuthStore().user;
+
 
     return (
         <View style={styles.container}>
@@ -20,7 +22,7 @@ const SideMenu = () => {
                         <Ionicons name="happy-outline" style={styles.icon} />
                     </View>
                     <View style={styles.textContainer}>
-                        <Text style={styles.greetingText}>{t('hello')}</Text>
+                        <Text style={styles.greetingText}>{t('hello')} {user?.name}</Text>
                         <Text style={styles.contactText}>{t('myContactData')}</Text>
                     </View>
                 </View>

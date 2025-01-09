@@ -1,6 +1,7 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '@/src/api';
+import {User} from "@/src/interface/user";
 
 const API_URL = api.backendUrl + '/auth';
 
