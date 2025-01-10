@@ -8,7 +8,7 @@ import {useDeliveryStore} from "@/src/zustand/delivery";
 import {Ionicons} from "@expo/vector-icons";
 import UserAddresses from "@/src/components/order/UserAddresses";
 
-const Delivery = () => {
+const DeliveryAddress = () => {
     const {t} = useTranslation();
     const navigation = useNavigation();
     const isAuth = useAuthStore(state => state.isAuthenticated)
@@ -73,4 +73,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Delivery
+export default DeliveryAddress

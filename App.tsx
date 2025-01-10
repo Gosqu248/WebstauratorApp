@@ -1,12 +1,11 @@
 import { NavigationContainer } from '@react-navigation/native';
-import {StyleSheet, TouchableOpacity} from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { HomeScreen } from '@/src/screens/HomeScreen';
 import CustomHeader from '@/src/components/home/CustomHeader';
 import '@/src/language/i18n'
 import {BottomSheetModalProvider} from "@gorhom/bottom-sheet";
 import {DrawerLayout, GestureHandlerRootView} from "react-native-gesture-handler";
-import {useRef} from "react";
+import {useEffect, useRef} from "react";
 import SideMenu from "@/src/components/home/SideMenu";
 import LocationSearch from "@/src/screens/LocationSearch";
 import RestaurantDetails from "@/src/screens/RestaurantDetails";
@@ -15,6 +14,7 @@ import {useTranslation} from "react-i18next";
 import Login from "@/src/screens/Login";
 import Register from "@/src/screens/Register";
 import Order from "@/src/screens/Order";
+import useAuthStore from "@/src/zustand/auth";
 
 
 const Stack = createNativeStackNavigator();
@@ -22,6 +22,11 @@ const Stack = createNativeStackNavigator();
 export default function App() {
     const drawerRef = useRef<DrawerLayout>(null);
     const {t} = useTranslation();
+    const initializeAuth = useAuthStore(state => state.initializeAuth);
+
+    useEffect(() => {
+        initializeAuth();
+    }, []);
 
     const openDrawer = () => {
         drawerRef.current?.openDrawer();

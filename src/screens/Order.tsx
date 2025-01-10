@@ -4,7 +4,7 @@ import Colors from "@/constants/Colors";
 import {Ionicons} from "@expo/vector-icons";
 import {useNavigation} from "@react-navigation/native";
 import {useTranslation} from "react-i18next";
-import Delivery from "@/src/components/order/Delivery";
+import DeliveryAddress from "@/src/components/order/DeliveryAddress";
 
 export default function Order() {
     const navigation = useNavigation();
@@ -30,7 +30,7 @@ export default function Order() {
     }, [navigation]);
     return (
         <View style={styles.container}>
-            <Delivery></Delivery>
+            <DeliveryAddress></DeliveryAddress>
 
 
         </View>

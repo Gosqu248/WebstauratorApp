@@ -20,7 +20,7 @@ const RestaurantDetails = () => {
     const { restaurantId } = route.params;
     const navigation = useNavigation();
     const opacity = useSharedValue(0);
-    const { restaurants } = useRestaurantStore();
+    const restaurants = useRestaurantStore(state => state.restaurants);
     const [isInfoVisible, setInfoVisible] = useState(false);
     const { t } = useTranslation();
     const currentPrice = useCartStore(state => state.getRestaurantCart(restaurantId).currentPrice);

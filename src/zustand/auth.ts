@@ -22,6 +22,7 @@ const useAuthStore = create((set, get) => ({
     verify2FA: async (code) => {
         try {
             const jwt = await authService.verify2FA(code);
+            await AsyncStorage.setItem('jwt', jwt);
             set({ isAuthenticated: true, jwt });
             await get().getUser();
 
@@ -74,11 +75,11 @@ const useAuthStore = create((set, get) => ({
         }
     },
 
-    // Inicjalizacja stanu autoryzacji
     initializeAuth: async () => {
         const jwt = await AsyncStorage.getItem('jwt');
         if (jwt) {
             set({ isAuthenticated: true, jwt });
+            await get().getUser();
         } else {
             set({ isAuthenticated: false, jwt: null });
         }
