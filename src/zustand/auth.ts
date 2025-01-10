@@ -11,11 +11,7 @@ const useAuthStore = create((set, get) => ({
     // Logowanie użytkownika
     login: async (email, password) => {
         try {
-            const success = await authService.login(email, password);
-            if (success) {
-                set({ isAuthenticated: true });
-            }
-            return success;
+            return await authService.login(email, password);
         } catch (error) {
             console.error('Login error:', error);
             return false;

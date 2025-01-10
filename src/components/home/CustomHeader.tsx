@@ -17,7 +17,6 @@ const CustomHeader = ({ openDrawer }: CustomHeaderProps) => {
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const address = useAddressStore((state) => state.address);
     const setAddress = useAddressStore((state) => state.setAddress);
-    const coordinates = useCoordinatesStore((state) => state.coordinates);
     const setCoordinates = useCoordinatesStore((state) => state.setCoordinates);
 
     const openModal = () => {

@@ -15,8 +15,8 @@ const Login = () => {
     const [error, setError] = useState('');
     const [isError, setIsError] = useState(false);
     const [fa, set2fa] = useState(false);
-    const login = useAuthStore().login;
-    const verify2FA = useAuthStore().verify2FA;
+    const login = useAuthStore(state => state.login)
+    const verify2FA = useAuthStore(state => state.verify2FA)
 
     const handleLogin = async () => {
         try {

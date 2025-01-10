@@ -4,6 +4,7 @@ import Colors from "@/constants/Colors";
 import {Ionicons} from "@expo/vector-icons";
 import {useNavigation} from "@react-navigation/native";
 import {useTranslation} from "react-i18next";
+import Delivery from "@/src/components/order/Delivery";
 
 export default function Order() {
     const navigation = useNavigation();
@@ -17,7 +18,7 @@ export default function Order() {
                 backgroundColor: Colors.primary,
             },
             headerTintColor: 'white',
-            headerTitleAlign: 'center', // Center the header title
+            headerTitleAlign: 'center',
             headerLeft: () => (
                 <View style={styles.header}>
                     <TouchableOpacity onPress={() => navigation.goBack()} style={styles.roundButton}>
@@ -28,9 +29,11 @@ export default function Order() {
         });
     }, [navigation]);
     return (
-        <ScrollView style={styles.container}>
+        <View style={styles.container}>
+            <Delivery></Delivery>
 
-        </ScrollView>
+
+        </View>
     )
 }
 const styles = StyleSheet.create({
@@ -48,5 +51,6 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-    }
+        alignItems: 'center',
+    },
 });

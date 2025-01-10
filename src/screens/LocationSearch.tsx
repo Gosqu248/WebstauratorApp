@@ -10,6 +10,7 @@ import { useCoordinatesStore } from "@/src/zustand/coordinates";
 
 const LocationSearch = () => {
     const setAddress = useAddressStore((state) => state.setAddress);
+    const coordinates = useCoordinatesStore((state) => state.coordinates);
     const setCoordinates = useCoordinatesStore((state) => state.setCoordinates);
     const navigation = useNavigation();
     const mapRef = useRef(null);
@@ -17,8 +18,8 @@ const LocationSearch = () => {
     const [prvAddress, setPrvAddress] = useState('');
 
     const [location, setLocation] = useState({
-        latitude: 50.012100,
-        longitude: 20.985842,
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude,
         latitudeDelta: 0.03,
         longitudeDelta: 0.03,
     });
@@ -41,8 +42,10 @@ const LocationSearch = () => {
     }
 
     const confirmLocation = async () => {
-        setCoordinates(location);
-        setAddress(prvAddress);
+        if (prvAddress ) {
+            setCoordinates(location);
+            setAddress(prvAddress);
+        }
         navigation.goBack();
     }
 
