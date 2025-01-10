@@ -1,4 +1,7 @@
-import {Delivery} from "@/src/interface/delivery";
+import {Delivery, DeliveryHour} from "@/src/interface/delivery";
+import {RestaurantOpinion} from "@/src/interface/restaurant-opinion";
+import {RestaurantAddress} from "@/src/interface/restaurantAddress";
+import {PaymentMethod} from "@/src/interface/paymentMethod";
 
 export interface Restaurant {
     restaurantId: number;
@@ -11,6 +14,10 @@ export interface Restaurant {
     rating?: number;
     deliveryPrice?: number;
     delivery?: Delivery;
+    deliveryHour?: DeliveryHour[];
+    opinions?: RestaurantOpinion[];
+    address?: RestaurantAddress;
+    paymentMethods?: PaymentMethod[];
     latitude: number;
     longitude: number;
 }

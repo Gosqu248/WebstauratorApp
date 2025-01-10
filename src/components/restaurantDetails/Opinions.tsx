@@ -1,23 +1,12 @@
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {fetchRestaurantOpinion} from "@/src/services/restaurantOpinion";
-import {RestaurantOpinion} from "@/src/interface/restaurant-opinion";
+import React from 'react';
 import {useTranslation} from "react-i18next";
 import {Restaurant} from "@/src/interface/restaurant";
 import StartRating from "@/src/components/restaurantDetails/StartRating";
 
 const Opinions = ({ restaurant }: { restaurant: Restaurant }) => {
-    const [opinions, setOpinions] = useState<RestaurantOpinion[]>([]);
+    const opinions = restaurant.opinions || [];
     const { t } = useTranslation();
-
-    const getOpinions = async () => {
-        const fetchedOpinions = await fetchRestaurantOpinion(restaurant.restaurantId);
-        setOpinions(fetchedOpinions);
-    };
-
-    useEffect(() => {
-        getOpinions();
-    }, [restaurant.restaurantId]);
 
     return (
         <ScrollView style={styles.container}>

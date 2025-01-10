@@ -7,6 +7,7 @@ import {useNavigation} from "@react-navigation/native";
 import {useRestaurantStore} from "@/src/zustand/restaurantStore";
 import {Restaurant} from "@/src/interface/restaurant";
 import {useDeliveryStore} from "@/src/zustand/delivery";
+import {useCurrentRestaurantStore} from "@/src/zustand/currentRestaurant";
 
 const RestaurantList = () => {
     const { t } = useTranslation();
@@ -16,6 +17,7 @@ const RestaurantList = () => {
     const filteredRestaurants = restaurants.filter((restaurant) =>
         deliveryType === 'pickup' ? restaurant.pickup : true
     );
+    const setCurrentRestaurant = useCurrentRestaurantStore(state => state.setCurrentRestaurant);
 
     const RestaurantItem = ({ item }: { item: Restaurant }) => {
         const distance = item.distance > 1
@@ -23,9 +25,8 @@ const RestaurantList = () => {
             : `${(item.distance * 1000).toFixed(0)} m`;
 
         const goToRestaurant = () => {
-            navigation.navigate('RestaurantDetails', {
-                restaurantId: item.restaurantId,
-            });
+            setCurrentRestaurant(item.restaurantId)
+            navigation.navigate('RestaurantDetails');
         };
 
         return (

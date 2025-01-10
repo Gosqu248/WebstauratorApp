@@ -1,25 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useRef} from 'react';
 import {View, Text, StyleSheet, ScrollView, Image} from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { Restaurant } from '@/src/interface/restaurant';
-import { fetchRestaurantAddress } from '@/src/services/restaurantService';
-import { RestaurantAddress } from '@/src/interface/restaurantAddress';
-import { DeliveryHour } from '@/src/interface/delivery';
 import DeliveryHours from '@/src/components/restaurantDetails/DeliveryHours';
-import { fetchDeliveryHour } from "@/src/services/deliveryHourService";
 import Colors from "@/constants/Colors";
-import { fetchRestaurantPaymentMethods } from "@/src/services/paymentService";
-import { PaymentMethod } from "@/src/interface/paymentMethod";
 import api from "@/src/api";
 
 const Info = ({ restaurant }: { restaurant: Restaurant }) => {
   const mapRef = useRef(null);
   const { t } = useTranslation();
-  const [address, setAddress] = useState<RestaurantAddress>();
-  const [deliveryHour, setDeliveryHour] = useState<DeliveryHour[]>([]);
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const imgUrl = api.backendImgUrl;
 
   const location = {
@@ -29,26 +20,6 @@ const Info = ({ restaurant }: { restaurant: Restaurant }) => {
     longitudeDelta: 0.0053,
   };
 
-  const getAddress = async () => {
-    const fetchedAddress = await fetchRestaurantAddress(restaurant.restaurantId);
-    setAddress(fetchedAddress);
-  };
-
-  const getDeliveryHour = async () => {
-    const fetchedDeliveryHour = await fetchDeliveryHour(restaurant.restaurantId);
-    setDeliveryHour(fetchedDeliveryHour);
-  };
-
-  const getPaymentMethods = async () => {
-    const fetchedPaymentMethods = await fetchRestaurantPaymentMethods(restaurant.restaurantId);
-    setPaymentMethods(fetchedPaymentMethods);
-  };
-
-  useEffect(() => {
-    getAddress();
-    getDeliveryHour();
-    getPaymentMethods();
-  }, [restaurant.restaurantId]);
 
   return (
     <ScrollView style={styles.container}>
@@ -59,7 +30,7 @@ const Info = ({ restaurant }: { restaurant: Restaurant }) => {
         <Ionicons name="time-outline" size={20} color="#000" />
         <Text style={styles.headerText}> {t('deliveryHour')}</Text>
       </View>
-      <DeliveryHours deliveryHours={deliveryHour} />
+      <DeliveryHours deliveryHours={restaurant.deliveryHour} />
 
       <View style={styles.header}>
         <Ionicons name="cash-outline" size={20} color="#000" />
@@ -82,7 +53,7 @@ const Info = ({ restaurant }: { restaurant: Restaurant }) => {
       </View>
         <View style={styles.description}>
             <View style={styles.paymentMethods}>
-                {paymentMethods.map((payment) => (
+                {restaurant.paymentMethods?.map((payment) => (
                     <View key={payment.method} style={styles.paymentItem}>
                         <Image source={{ uri: imgUrl + payment.image }} style={styles.paymentImage} />
                     </View>
@@ -96,8 +67,8 @@ const Info = ({ restaurant }: { restaurant: Restaurant }) => {
       </View>
         <View style={styles.description2}>
             <Text style={styles.infoText}> {restaurant.name}</Text>
-            <Text style={styles.infoText}> {address?.street} {address?.flatNumber}</Text>
-            <Text style={styles.infoText}> {address?.zipCode} {address?.city}</Text>
+            <Text style={styles.infoText}> {restaurant.address?.street} {restaurant.address?.flatNumber}</Text>
+            <Text style={styles.infoText}> {restaurant.address?.zipCode} {restaurant.address?.city}</Text>
         </View>
     </ScrollView>
   );

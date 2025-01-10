@@ -39,14 +39,13 @@ const DeliveryAddress = () => {
 }
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         width: '80%',
+        margin: 20,
     },
     loginContainer: {
         alignItems: 'center',
         justifyContent: 'center',
         padding: 20,
-        marginTop: 20,
         borderRadius: 10,
         backgroundColor: '#f5f5f5',
         borderWidth: 1,

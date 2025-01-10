@@ -14,18 +14,16 @@ import ModalInfo from "@/src/components/restaurantDetails/ModalInfo";
 import { Restaurant } from "@/src/interface/restaurant";
 import { useTranslation } from "react-i18next";
 import { useCartStore } from "@/src/zustand/cartStore";
+import {useCurrentRestaurantStore} from "@/src/zustand/currentRestaurant";
 
 const RestaurantDetails = () => {
-    const route = useRoute();
-    const { restaurantId } = route.params;
     const navigation = useNavigation();
     const opacity = useSharedValue(0);
-    const restaurants = useRestaurantStore(state => state.restaurants);
     const [isInfoVisible, setInfoVisible] = useState(false);
     const { t } = useTranslation();
+    const restaurantId  = useCurrentRestaurantStore(state => state.currentRestaurant);
     const currentPrice = useCartStore(state => state.getRestaurantCart(restaurantId).currentPrice);
-
-    const restaurant = restaurants.find(r => r.restaurantId === restaurantId);
+    const restaurant = useRestaurantStore(state => state.getRestaurantById(restaurantId));
 
     const goToBasket = () => {
         navigation.navigate('Basket', { restaurant: restaurant });

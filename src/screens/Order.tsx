@@ -5,6 +5,7 @@ import {Ionicons} from "@expo/vector-icons";
 import {useNavigation} from "@react-navigation/native";
 import {useTranslation} from "react-i18next";
 import DeliveryAddress from "@/src/components/order/DeliveryAddress";
+import DeliveryHour from "@/src/components/order/DeliveryHour";
 
 export default function Order() {
     const navigation = useNavigation();
@@ -31,7 +32,7 @@ export default function Order() {
     return (
         <View style={styles.container}>
             <DeliveryAddress></DeliveryAddress>
-
+            <DeliveryHour></DeliveryHour>
 
         </View>
     )

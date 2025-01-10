@@ -1,14 +1,13 @@
 import {View, Text, Image, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Menu } from "@/src/interface/menu";
-import { useRoute } from "@react-navigation/native";
 import {fetchMenu} from "@/src/services/menuService";
 import AddToBasket from "@/src/components/restaurantDetails/AddToBasket";
+import {useCurrentRestaurantStore} from "@/src/zustand/currentRestaurant";
 
 const RestaurantItems = ({selectedCategory, searchQuery}) => {
     const [menu, setMenu] = useState<(Menu | { isHeader: true; title: string })[]>([]);
-    const route = useRoute();
-    const { restaurantId } = route.params;
+    const restaurantId  = useCurrentRestaurantStore(state => state.currentRestaurant);
     const [isAddModal, setAddModal] = useState(false);
     const [selectedMenuItem, setSelectedMenuItem] = useState<Menu | null>(null);
 

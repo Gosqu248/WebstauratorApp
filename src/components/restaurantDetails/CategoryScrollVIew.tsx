@@ -6,6 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import RestaurantItems from "@/src/components/restaurantDetails/RestaurantItems";
 import {useTranslation} from "react-i18next";
 import {fetchCategories} from "@/src/services/categoryService";
+import {useCurrentRestaurantStore} from "@/src/zustand/currentRestaurant";
 
 const CategoryScrollView = () => {
     const [categories, setCategories] = useState([]);
@@ -13,8 +14,7 @@ const CategoryScrollView = () => {
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [isSearchVisible, setIsSearchVisible] = useState<boolean>(false);
-    const route = useRoute();
-    const { restaurantId } = route.params;
+    const restaurantId  = useCurrentRestaurantStore(state => state.currentRestaurant);
     const { t } = useTranslation();
 
     const scrollRef = useRef<ScrollView>(null);

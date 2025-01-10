@@ -2,7 +2,7 @@ import axios from "axios";
 import api from "@/src/api";
 import { Menu } from "@/src/interface/menu";
 
-export const fetchMenu = async (restaurantId: string): Promise<(Menu | { isHeader: true; title: string })[]> => {
+export const fetchMenu = async (restaurantId: number): Promise<(Menu | { isHeader: true; title: string })[]> => {
     try {
         const response = await axios.get<Menu[]>(`${api.backendUrl}/menu/getRestaurantMenu?restaurantId=${restaurantId}`);
         if (response?.data) {
