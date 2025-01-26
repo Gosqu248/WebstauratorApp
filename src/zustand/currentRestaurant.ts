@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 interface CurrentRestaurantState {
-    currentRestaurant: number;
+    currentRestaurant: number | null;
     setCurrentRestaurant: (restaurantId: number | null) => void;
 }
 

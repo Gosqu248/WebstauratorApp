@@ -9,6 +9,7 @@ import { Restaurant } from '@/src/interface/restaurant';
 import {fetchDeliveryHour} from "@/src/services/deliveryHourService";
 import {fetchRestaurantOpinion} from "@/src/services/restaurantOpinion";
 import {fetchRestaurantPaymentMethods} from "@/src/services/paymentService";
+import {DeliveryHour} from "@/src/interface/delivery";
 
 interface RestaurantState {
     restaurants: Restaurant[];
@@ -16,6 +17,7 @@ interface RestaurantState {
     error: string | null;
     fetchRestaurants: (address: string) => Promise<void>;
     getRestaurantById: (restaurantId: number) => Restaurant | undefined;
+    getCurrentDeliveryHours: (restaurantId: number | null) => DeliveryHour | undefined;
 }
 
 export const useRestaurantStore = create<RestaurantState>((set, get) => ({
@@ -71,4 +73,10 @@ export const useRestaurantStore = create<RestaurantState>((set, get) => ({
         const { restaurants } = get();
         return restaurants.find(restaurant => restaurant.restaurantId === restaurantId);
     },
+    getCurrentDeliveryHours: (restaurantId: number) => {
+        const { restaurants } = get();
+        const restaurant = restaurants.find(restaurant => restaurant.restaurantId === restaurantId);
+        const currentDay = new Date().getDay();
+        return restaurant?.deliveryHours?.find(deliveryHour => deliveryHour.dayOfWeek === currentDay);
+    }
 }));
