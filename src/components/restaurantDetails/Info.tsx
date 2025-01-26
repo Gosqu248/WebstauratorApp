@@ -30,7 +30,7 @@ const Info = ({ restaurant }: { restaurant: Restaurant }) => {
         <Ionicons name="time-outline" size={20} color="#000" />
         <Text style={styles.headerText}> {t('deliveryHour')}</Text>
       </View>
-      <DeliveryHours deliveryHours={restaurant.deliveryHour} />
+      <DeliveryHours deliveryHours={restaurant.deliveryHours} />
 
       <View style={styles.header}>
         <Ionicons name="cash-outline" size={20} color="#000" />

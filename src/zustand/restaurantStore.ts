@@ -32,7 +32,7 @@ export const useRestaurantStore = create<RestaurantState>((set, get) => ({
                 searchedRestaurants.map(async (restaurant) => {
                     const restaurantData = await fetchRestaurantData(restaurant.restaurantId);
                     const delivery = await fetchDelivery(restaurant.restaurantId);
-                    const deliveryHour = await fetchDeliveryHour(restaurant.restaurantId);
+                    const deliveryHours = await fetchDeliveryHour(restaurant.restaurantId);
                     const opinions = await fetchRestaurantOpinion(restaurant.restaurantId);
                     const address = await fetchRestaurantAddress(restaurant.restaurantId);
                     const paymentMethods = await fetchRestaurantPaymentMethods(restaurant.restaurantId);
@@ -49,7 +49,7 @@ export const useRestaurantStore = create<RestaurantState>((set, get) => ({
                         rating: restaurant.rating || 0,
                         deliveryPrice: restaurant.deliveryPrice || undefined,
                         delivery: delivery,
-                        deliveryHour: deliveryHour,
+                        deliveryHours: deliveryHours,
                         opinions: opinions,
                         address: address,
                         paymentMethods: paymentMethods,

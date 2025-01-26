@@ -14,7 +14,7 @@ export interface Restaurant {
     rating?: number;
     deliveryPrice?: number;
     delivery?: Delivery;
-    deliveryHour?: DeliveryHour[];
+    deliveryHours?: DeliveryHour[];
     opinions?: RestaurantOpinion[];
     address?: RestaurantAddress;
     paymentMethods?: PaymentMethod[];

@@ -3,8 +3,9 @@ import React from 'react'
 import {useTranslation} from "react-i18next";
 import Colors from "@/constants/Colors";
 import {useDeliveryStore} from "@/src/zustand/delivery";
+import {Delivery} from "@/src/interface/delivery";
 
-const DeliveryHour = () => {
+const SelectHour = ({delivery}: {delivery: Delivery }) => {
     const {t} = useTranslation();
     const deliveryType = useDeliveryStore(state => state.deliveryType)
 
@@ -12,13 +13,28 @@ const DeliveryHour = () => {
     return (
         <View style={styles.container}>
             { deliveryType === 'delivery' ? (
-                <Text style={styles.mainText}>{t('planDelivery')}</Text>
+                <>
+                    <Text style={styles.mainText}>{t('planDelivery')}</Text>
+                    <TouchableOpacity >
+                        <View style={styles.deliveryButton}>
+                            <Text>{t('asSoonAsPossible')} ({delivery.deliveryMinTime}-{delivery.deliveryMaxTime} min)</Text>
+                        </View>
+                    </TouchableOpacity>
+
+                </>
             ) : (
-                <Text style={styles.mainText}>{t('planPickUp')}</Text>
+                <>
+                    <Text style={styles.mainText}>{t('planPickUp')}</Text>
+                    <TouchableOpacity >
+                        <View style={styles.deliveryButton}>
+                            <Text>{t('asSoonAsPossible')} ({delivery.pickupTime} min)</Text>
+                        </View>
+                    </TouchableOpacity>
+                </>
             )}
             <TouchableOpacity >
                 <View style={styles.deliveryButton}>
-                    <Text>{t('asSoonAsPossible')}</Text>
+                    <Text>{t('chooseHour')}</Text>
                 </View>
             </TouchableOpacity>
 
@@ -54,4 +70,4 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     }
 })
-export default DeliveryHour
+export default SelectHour

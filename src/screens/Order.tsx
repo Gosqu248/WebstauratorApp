@@ -5,11 +5,16 @@ import {Ionicons} from "@expo/vector-icons";
 import {useNavigation} from "@react-navigation/native";
 import {useTranslation} from "react-i18next";
 import DeliveryAddress from "@/src/components/order/DeliveryAddress";
-import DeliveryHour from "@/src/components/order/DeliveryHour";
+import SelectHour from "@/src/components/order/SelectHour";
+import {useCurrentRestaurantStore} from "@/src/zustand/currentRestaurant";
+import {useRestaurantStore} from "@/src/zustand/restaurantStore";
 
 export default function Order() {
     const navigation = useNavigation();
     const {t} = useTranslation();
+    const restaurantId = useCurrentRestaurantStore(state => state.currentRestaurant);
+    const restaurant = useRestaurantStore(state => state.getRestaurantById(restaurantId));
+
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -32,7 +37,7 @@ export default function Order() {
     return (
         <View style={styles.container}>
             <DeliveryAddress></DeliveryAddress>
-            <DeliveryHour></DeliveryHour>
+            <SelectHour delivery={restaurant?.delivery}></SelectHour>
 
         </View>
     )
