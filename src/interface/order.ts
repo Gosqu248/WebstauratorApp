@@ -1,4 +1,4 @@
-import {Restaurant} from "./restaurant";
+import {Restaurant, RestaurantInfo} from "./restaurant";
 import {OrderMenu} from "@/src/interface/orderMenu";
 import {UserDTO} from "@/src/interface/restaurant-opinion";
 import {UserAddress} from "@/src/interface/userAddress";
@@ -10,12 +10,11 @@ export interface Order {
   deliveryTime: string;
   deliveryOption: string;
   comment: string;
-  orderMenus: OrderMenu[];
+  paymentId: string | null;
   user: UserDTO;
   userAddress: UserAddress | null;
-  restaurant: Restaurant;
-  paymentId: string | null;
-
+  restaurant: RestaurantInfo | null;
+  orderMenus: OrderMenu[];
 }
 
 
@@ -59,6 +58,6 @@ export interface AdminOrderDTO {
 }
 
 export enum OrderStatus {
-  zaplacone = "zapłacone",
-  niezaplacone = "niezapłacone",
+  zapłacone = "zapłacone",
+  niezaplcone = "niezapłacone",
 }

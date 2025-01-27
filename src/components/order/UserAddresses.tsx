@@ -6,8 +6,8 @@ import useAuthStore from "@/src/zustand/auth";
 import {useCoordinatesStore} from "@/src/zustand/coordinates";
 import {useTranslation} from "react-i18next";
 import Colors from "@/constants/Colors";
-import {useDeliveryAddressStore} from "@/src/zustand/deliveryAddress";
 import {Ionicons} from "@expo/vector-icons";
+import {useOrderStore} from "@/src/zustand/order";
 
 const UserAddresses = () => {
     const {t} = useTranslation();
@@ -15,7 +15,7 @@ const UserAddresses = () => {
     const jwt = useAuthStore(state => state.jwt)
     const coordinates = useCoordinatesStore(state => state.coordinates)
     const isAuth = useAuthStore(state => state.isAuthenticated)
-    const setDeliveryAddress = useDeliveryAddressStore(state => state.setDeliveryAddress);
+    const setDeliveryAddress = useOrderStore(state => state.setDeliveryAddress);
     const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
 
     const handleSelectAddress = (address: UserAddress) => {

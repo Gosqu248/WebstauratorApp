@@ -10,9 +10,10 @@ interface RestaurantCart {
 interface CartState {
   carts: Record<number, RestaurantCart>;
   addToBasket: (restaurantId: number, item: OrderMenu) => void;
-  getRestaurantCart: (restaurantId: number) => RestaurantCart;
+  getRestaurantCart: (restaurantId: number | null) => RestaurantCart;
   increaseQuantity: (restaurantId: number, menu: Menu ) => void;
   decreaseQuantity: (restaurantId: number, menu: Menu ) => void;
+  removeCart: (restaurantId: number | null) => void;
 }
 
 const calculateCurrentPrice = (basket: OrderMenu[]) =>
@@ -95,6 +96,12 @@ export const useCartStore = create<CartState>((set, get) => ({
         }
       }
     };
+  }),
+
+  removeCart: (restaurantId) => set((state) => {
+    const newCarts = { ...state.carts };
+    delete newCarts[restaurantId];
+    return { carts: newCarts };
   }),
 
 }));

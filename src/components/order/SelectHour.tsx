@@ -6,7 +6,7 @@ import { useDeliveryStore } from '@/src/zustand/delivery';
 import { Delivery } from '@/src/interface/delivery';
 import { useRestaurantStore } from '@/src/zustand/restaurantStore';
 import { useCurrentRestaurantStore } from '@/src/zustand/currentRestaurant';
-import {useSelectedOptionStore} from "@/src/zustand/selectedHour";
+import {useOrderStore} from "@/src/zustand/order";
 
 const SelectHour = ({ delivery }: { delivery: Delivery }) => {
     const { t } = useTranslation();
@@ -16,7 +16,9 @@ const SelectHour = ({ delivery }: { delivery: Delivery }) => {
         state.getCurrentDeliveryHours(currentRestaurant)
     );
     const [showTimePicker, setShowTimePicker] = useState(false);
-    const { selectedOption, setSelectedOption } = useSelectedOptionStore();
+    const selectedOption = useOrderStore(state => state.selectedOption);
+    const setSelectedOption = useOrderStore(state => state.setSelectedOption);
+    const [time, setTime] = useState('');
 
 
     const generateTimeSlots = () => {
@@ -72,6 +74,7 @@ const SelectHour = ({ delivery }: { delivery: Delivery }) => {
                     <TouchableOpacity
                         onPress={() => {
                             setSelectedOption('Jak najszybciej');
+                            setTime('');
                         }}
                     >
                         <View
@@ -115,7 +118,7 @@ const SelectHour = ({ delivery }: { delivery: Delivery }) => {
                         selectedOption !== 'Jak najszybciej' && selectedOption !== '' && styles.selectedOption,
                     ]}
                 >
-                    <Text style={selectedOption !== 'Jak najszybciej' && styles.selectedText}>{selectedOption || t('chooseHour')}</Text>
+                    <Text style={selectedOption !== 'Jak najszybciej' && selectedOption !== ''  && styles.selectedText}>{time || t('chooseHour')}</Text>
                 </View>
             </TouchableOpacity>
 
@@ -125,6 +128,7 @@ const SelectHour = ({ delivery }: { delivery: Delivery }) => {
                         <TouchableOpacity
                             key={index}
                             onPress={() => {
+                                setTime(time);
                                 setSelectedOption(time);
                                 setShowTimePicker(false);
                             }}

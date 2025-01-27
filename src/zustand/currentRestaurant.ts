@@ -7,7 +7,7 @@ interface CurrentRestaurantState {
 
 export const useCurrentRestaurantStore = create<CurrentRestaurantState>((set) => ({
     currentRestaurant: null,
-    setCurrentRestaurant: (restaurantId: number) => {
+    setCurrentRestaurant: (restaurantId: number | null) => {
         set({ currentRestaurant: restaurantId });
     },
 }));
