@@ -18,12 +18,12 @@ const PaymentMethodComponent = ({ paymentMethods }: { paymentMethods: PaymentMet
                 paymentMethods.map((payment) => (
                     <TouchableOpacity key={payment.method}
                         onPress={() => {
-                            if (selectedPayment === payment) {
+                            if (selectedPayment === payment.method) {
                                 setSelectedPayment(null);
                             } else {
                                 setSelectedPayment(payment.method);
                             }}}>
-                        <View style={[styles.paymentContainer, selectedPayment === payment && styles.selectedPaymentContainer]}>
+                        <View style={[styles.paymentContainer, selectedPayment === payment.method && styles.selectedPaymentContainer]}>
                             <Image source={{ uri: api.backendImgUrl + payment.image }} style={styles.image} />
                             <Text style={styles.text}>{payment.method}</Text>
                         </View>

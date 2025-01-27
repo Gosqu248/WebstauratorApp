@@ -124,6 +124,8 @@ export interface TranslationKeys {
     asSoonAsPossible: string;
     plan: string;
     chooseHour: string;
+    orderDate: string;
+    ordersMenu: string;
     selectHour: string;
     confirm: string;
     cancel: string;
@@ -186,4 +188,5 @@ export interface TranslationKeys {
     invalidEmailOrPassword: string;
     somethingWentWrong: string;
     invalid2FA: string;
+    orderHistory: string;
 }

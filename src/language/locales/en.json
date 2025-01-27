@@ -185,5 +185,7 @@
   "reLogin": "Re-login",
   "invalidEmailOrPassword": "Invalid email or password",
   "somethingWentWrong": "Something went wrong",
-  "invalid2FA": "Invalid verification code"
+  "invalid2FA": "Invalid verification code",
+  "orderDate": "Order date",
+  "ordersMenu": "Orders menu"
 }

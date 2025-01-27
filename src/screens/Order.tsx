@@ -20,6 +20,7 @@ import {UserDTO} from "@/src/interface/user";
 import {UserAddress} from "@/src/interface/userAddress";
 import {createOrder} from "@/src/services/orderService";
 import {RestaurantInfo} from "@/src/interface/restaurant";
+import {createPayUPayment} from "@/src/services/payUService";
 
 export default function OrderScreen() {
     const navigation = useNavigation();
@@ -62,13 +63,12 @@ export default function OrderScreen() {
             imageUrl: restaurant.imageUrl
         }
 
-
         const orderDetails: Order = {
             paymentMethod: paymentMethod,
             status: OrderStatus.niezaplcone,
             totalPrice: totalPrice,
             deliveryTime: deliveryHours,
-            deliveryOption: deliveryOption,
+            deliveryOption: deliveryOption === 'delivery' ? 'dostawa' : 'odbiór',
             comment: comment,
             paymentId: null,
             user: userData,
@@ -77,13 +77,15 @@ export default function OrderScreen() {
             orderMenus: orderMenus,
         };
 
-        console.log('Order paymentent:', paymentMethod);
-        console.log('Order details:', orderDetails.status);
-
         try {
-            const response = await createOrder(orderDetails);
-            navigation.goBack();
-            console.log('Order created successfully:', response);
+            if (orderDetails.paymentMethod === 'Gotówka') {
+                const response = await createOrder(orderDetails);
+                navigation.goBack();
+                console.log('Order created successfully:', response);
+            } else {
+                const response = await createPayUPayment(orderDetails);
+                navigation.navigate('Payment', { uri: response.redirectUri });
+            }
         } catch (error) {
             console.error('Error creating order:', error);
         }

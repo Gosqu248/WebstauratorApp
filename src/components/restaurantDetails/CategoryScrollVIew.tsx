@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, ScrollView, TouchableOpacity, Text, StyleSheet, TextInput } from 'react-native';
-import { useRoute } from "@react-navigation/native";
 import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import RestaurantItems from "@/src/components/restaurantDetails/RestaurantItems";

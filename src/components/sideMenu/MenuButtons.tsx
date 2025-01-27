@@ -1,14 +1,15 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useNavigation } from '@react-navigation/native';
 import Colors from "@/constants/Colors";
-import {FontAwesome, Ionicons} from '@expo/vector-icons';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import useAuthStore from "@/src/zustand/auth";
 
 const MenuButtons = () => {
     const { t, i18n } = useTranslation();
+    const navigation = useNavigation();
     const isAuth = useAuthStore().isAuthenticated;
     const logout = useAuthStore().logout;
 
@@ -19,7 +20,7 @@ const MenuButtons = () => {
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.menuItem}>
+            <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('OrdersHistory')}>
                 <Ionicons name="cart" style={styles.icon} />
                 <Text style={styles.menuText}>{t('orders')}</Text>
             </TouchableOpacity>
@@ -95,11 +96,11 @@ const styles = StyleSheet.create({
     flag: {
         width: 24,
         height: 24,
-
     },
     logoutButton: {
         backgroundColor: "#fd9e9e",
         marginTop: 20,
     }
 });
+
 export default MenuButtons;

@@ -185,5 +185,7 @@
   "reLogin": "Ponów logowanie",
   "invalidEmailOrPassword": "Nieprawidłowy adres e-mail lub hasło",
   "somethingWentWrong": "Coś poszło nie tak",
-  "invalid2FA": "Nieprawidłowy kod weryfikacyjny"
+  "invalid2FA": "Nieprawidłowy kod weryfikacyjny",
+  "orderDate": "Data zamówienia",
+  "ordersMenu": "Menu zamówienia"
 }

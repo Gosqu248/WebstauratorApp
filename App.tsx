@@ -15,6 +15,8 @@ import Login from "@/src/screens/Login";
 import Register from "@/src/screens/Register";
 import Order from "@/src/screens/Order";
 import useAuthStore from "@/src/zustand/auth";
+import PaymentView from "@/src/screens/PaymentView";
+import OrdersHistory from "@/src/screens/OrdersHistory";
 
 
 const Stack = createNativeStackNavigator();
@@ -102,6 +104,24 @@ export default function App() {
                             <Stack.Screen
                                 name="Order"
                                 component={Order}
+                                options={{
+                                    presentation: 'fullScreenModal',
+                                    gestureEnabled: true,
+                                    gestureDirection: 'horizontal',
+                                }}
+                            />
+                            <Stack.Screen
+                                name="Payment"
+                                component={PaymentView}
+                                options={{
+                                    presentation: 'fullScreenModal',
+                                    gestureEnabled: true,
+                                    gestureDirection: 'horizontal',
+                                }}
+                            />
+                            <Stack.Screen
+                                name="OrdersHistory"
+                                component={OrdersHistory}
                                 options={{
                                     presentation: 'fullScreenModal',
                                     gestureEnabled: true,
